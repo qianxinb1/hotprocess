@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>材料热处理与热加工工艺汇总</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f5f7fa}
+header{padding:20px;background:#1f4e79;color:white}
+.container{padding:20px}
+.tab{overflow:hidden;background:#fff;border-radius:8px}
+.tab button{background:inherit;border:none;outline:none;padding:14px 18px;cursor:pointer}
+.tab button:hover{background:#e8eef7}
+.tab button.active{background:#1f4e79;color:#fff}
+.content{display:none;background:#fff;padding:20px;margin-top:10px;border-radius:8px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+th{background:#eef3f9}
+.card{background:#fff;padding:15px;border-radius:8px;margin-bottom:12px}
+input{padding:8px;width:300px}
+</style>
+</head>
+<body>
+<header>
+<h1>材料热处理与热加工工艺交互汇总</h1>
+<p>基于上传的TC材料、铝合金及综合研究报告整理</p>
+</header>
+
+<div class="container">
+<div class="card">
+<h3>快速检索</h3>
+<input id="search" placeholder="输入材料牌号，如 TC4、7075、GH4169">
+<p id="result"></p>
+</div>
+
+<div class="tab">
+<button class="tablinks active" onclick="openTab(event,'overview')">总览</button>
+<button class="tablinks" onclick="openTab(event,'titanium')">钛合金</button>
+<button class="tablinks" onclick="openTab(event,'aluminum')">铝合金</button>
+<button class="tablinks" onclick="openTab(event,'steel')">高强钢</button>
+<button class="tablinks" onclick="openTab(event,'nickel')">镍基合金</button>
+</div>
+
+<div id="overview" class="content" style="display:block">
+<h2>核心结论</h2>
+<ul>
+<li>钛合金以固溶+时效或退火为主，热加工窗口通常在800~1100℃。</li>
+<li>2xxx/7xxx铝合金均采用固溶→淬火→时效(T6/T7)路线。</li>
+<li>300M钢依赖淬火+回火获得超高强度。</li>
+<li>GH4169、GH4698采用多级时效强化γ′/γ″相。</li>
+</ul>
+</div>
+
+<div id="titanium" class="content">
+<h2>钛合金关键参数</h2>
+<table>
+<tr><th>材料</th><th>固溶/退火温度(℃)</th><th>时效(℃)</th><th>热加工温度(℃)</th></tr>
+<tr><td>TC4</td><td>905~1000</td><td>480~550</td><td>800~1030</td></tr>
+<tr><td>TC18</td><td>650~690 或双退火</td><td>540~600</td><td>750~900</td></tr>
+<tr><td>TC21</td><td>890~910</td><td>560~590</td><td>830~950</td></tr>
+<tr><td>TC17</td><td>788~816</td><td>602~685</td><td>770~950</td></tr>
+<tr><td>TC25</td><td>公开数据有限</td><td>约600(推断)</td><td>950~1100</td></tr>
+<tr><td>TA15</td><td>700~850退火</td><td>通常不采用时效</td><td>900~1020</td></tr>
+</table>
+</div>
+
+<div id="aluminum" class="content">
+<h2>铝合金关键参数</h2>
+<table>
+<tr><th>材料</th><th>固溶(℃)</th><th>时效(℃)</th><th>热加工温度(℃)</th></tr>
+<tr><td>2024/2A12</td><td>495~505</td><td>180~190</td><td>300~450</td></tr>
+<tr><td>2014/2A11</td><td>约505</td><td>约190</td><td>300~450</td></tr>
+<tr><td>2219/2A20</td><td>515~565</td><td>160~190</td><td>300~500</td></tr>
+<tr><td>7075</td><td>约480</td><td>121</td><td>300~450</td></tr>
+<tr><td>7050</td><td>472~477</td><td>121</td><td>300~460</td></tr>
+<tr><td>7010</td><td>约475</td><td>121</td><td>参考7075</td></tr>
+</table>
+</div>
+
+<div id="steel" class="content">
+<h2>超高强钢</h2>
+<table>
+<tr><th>材料</th><th>热处理</th><th>热加工温度</th></tr>
+<tr><td>300M</td><td>871℃奥氏体化+260~316℃回火</td><td>950~1050℃</td></tr>
+<tr><td>A-100</td><td>约870℃淬火+593℃回火(推断)</td><td>900~1000℃</td></tr>
+</table>
+</div>
+
+<div id="nickel" class="content">
+<h2>镍基高温合金</h2>
+<table>
+<tr><th>材料</th><th>固溶(℃)</th><th>时效(℃)</th><th>热加工(℃)</th></tr>
+<tr><td>GH4169</td><td>1020~1080</td><td>720~760 + 620~650</td><td>1000~1050</td></tr>
+<tr><td>GH4698</td><td>1110~1130</td><td>765~785，多级时效</td><td>1110~1130</td></tr>
+</table>
+</div>
+</div>
+
+<script>
+function openTab(evt,name){
+ document.querySelectorAll('.content').forEach(x=>x.style.display='none');
+ document.querySelectorAll('.tablinks').forEach(x=>x.classList.remove('active'));
+ document.getElementById(name).style.display='block';
+ evt.currentTarget.classList.add('active');
+}
+const data={TC4:'Ti-6Al-4V，航空应用最广泛',TC18:'近β钛合金',TC21:'高强损伤容限钛合金',
+TC17:'高强α+β钛合金',TA15:'近α钛合金',7075:'高强铝合金',GH4169:'对应Inconel718体系'};
+document.getElementById('search').addEventListener('input',e=>{
+ document.getElementById('result').innerText=data[e.target.value]||'';
+});
+</script>
+</body>
+</html>

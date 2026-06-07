@@ -3,111 +3,994 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>材料热处理与热加工工艺汇总</title>
+<title>高端合金材料热加工工艺交互式数据库</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f5f7fa}
-header{padding:20px;background:#1f4e79;color:white}
-.container{padding:20px}
-.tab{overflow:hidden;background:#fff;border-radius:8px}
-.tab button{background:inherit;border:none;outline:none;padding:14px 18px;cursor:pointer}
-.tab button:hover{background:#e8eef7}
-.tab button.active{background:#1f4e79;color:#fff}
-.content{display:none;background:#fff;padding:20px;margin-top:10px;border-radius:8px}
-table{border-collapse:collapse;width:100%}
-th,td{border:1px solid #ccc;padding:8px;text-align:left}
-th{background:#eef3f9}
-.card{background:#fff;padding:15px;border-radius:8px;margin-bottom:12px}
-input{padding:8px;width:300px}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --color-bg:#f8f8f6;
+  --color-surface:#ffffff;
+  --color-border:#e4e2da;
+  --color-border-mid:#cccac0;
+  --color-text:#2c2c2a;
+  --color-text-2:#5f5e5a;
+  --color-text-3:#888780;
+  --radius-md:8px;
+  --radius-lg:12px;
+  --radius-xl:16px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:13px;color:var(--color-text);background:var(--color-bg);line-height:1.6}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* Layout */
+.app-shell{max-width:1200px;margin:0 auto;padding:1.5rem 1rem 3rem}
+.header{margin-bottom:1.5rem}
+.header h1{font-size:18px;font-weight:500;color:var(--color-text);margin-bottom:4px}
+.header p{font-size:13px;color:var(--color-text-2)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;margin-right:6px;margin-bottom:4px}
+
+/* Nav Tabs */
+.tab-bar{display:flex;gap:4px;border-bottom:1px solid var(--color-border);margin-bottom:1.5rem;overflow-x:auto;padding-bottom:1px}
+.tab-btn{padding:6px 14px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--color-text-2);border-radius:var(--radius-md) var(--radius-md) 0 0;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:var(--color-text)}
+.tab-btn.active{color:#185FA5;border-bottom:2px solid #185FA5;font-weight:500}
+
+/* Category filter chips */
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.5rem;align-items:center}
+.filter-label{font-size:12px;color:var(--color-text-3);margin-right:4px}
+.chip{padding:4px 12px;border-radius:99px;border:0.5px solid var(--color-border-mid);background:var(--color-surface);cursor:pointer;font-size:12px;color:var(--color-text-2);transition:all .15s}
+.chip:hover{border-color:#378ADD;color:#185FA5}
+.chip.active{background:#E6F1FB;border-color:#378ADD;color:#185FA5;font-weight:500}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:1.5rem}
+.search-wrap input{width:100%;padding:8px 12px 8px 32px;border:0.5px solid var(--color-border-mid);border-radius:var(--radius-lg);background:var(--color-surface);font-size:13px;color:var(--color-text)}
+.search-wrap .icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--color-text-3);font-size:14px}
+
+/* Material Cards */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.m-card{background:var(--color-surface);border:0.5px solid var(--color-border);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .15s;overflow:hidden}
+.m-card:hover{border-color:var(--color-border-mid)}
+.m-card.expanded{border-color:#378ADD}
+.m-card-head{padding:14px 16px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.m-card-title{font-size:14px;font-weight:500;color:var(--color-text)}
+.m-card-sub{font-size:12px;color:var(--color-text-2);margin-top:2px}
+.m-card-cat{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.cat-tag{font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap;font-weight:500}
+.cat-superalloy{background:#EEEDFE;color:#534AB7}
+.cat-aluminum{background:#EAF3DE;color:#3B6D11}
+.cat-titanium{background:#E1F5EE;color:#0F6E56}
+.cat-steel{background:#FAECE7;color:#993C1D}
+
+.m-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 14px}
+.metric-item{background:#F8F8F6;border-radius:var(--radius-md);padding:8px 10px}
+.metric-label{font-size:11px;color:var(--color-text-3);margin-bottom:2px}
+.metric-val{font-size:13px;font-weight:500;color:var(--color-text)}
+
+/* Detail Panel */
+.m-detail{background:#F1EFE8;border-top:0.5px solid var(--color-border);padding:16px;display:none}
+.m-detail.open{display:block}
+.detail-section{margin-bottom:14px}
+.detail-section:last-child{margin-bottom:0}
+.detail-title{font-size:12px;font-weight:500;color:var(--color-text-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid var(--color-border)}
+.proc-table{width:100%;border-collapse:collapse;font-size:12px}
+.proc-table th{text-align:left;color:var(--color-text-3);font-weight:400;padding:4px 8px;border-bottom:0.5px solid var(--color-border)}
+.proc-table td{padding:5px 8px;border-bottom:0.5px solid #eeece5;color:var(--color-text)}
+.proc-table tr:last-child td{border-bottom:none}
+.proc-table tr:hover td{background:rgba(55,138,221,.05)}
+.note-box{background:#fff;border-left:3px solid #378ADD;padding:8px 10px;border-radius:0 var(--radius-md) var(--radius-md) 0;font-size:12px;color:var(--color-text-2);margin-top:8px}
+.note-box.warn{border-color:#BA7517;background:#FAEEDA}
+.note-box.danger{border-color:#E24B4A;background:#FCEBEB}
+
+/* Compare Tab */
+.compare-select-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.compare-select-row select{width:100%;padding:8px 12px;border:0.5px solid var(--color-border-mid);border-radius:var(--radius-lg);background:var(--color-surface);font-size:13px}
+.compare-table-wrap{overflow-x:auto}
+.compare-table{width:100%;border-collapse:collapse;font-size:12px}
+.compare-table th{background:var(--color-surface);border:0.5px solid var(--color-border);padding:8px 12px;font-weight:500;text-align:left;position:sticky;top:0}
+.compare-table td{border:0.5px solid var(--color-border);padding:8px 12px;vertical-align:top}
+.compare-table tr:nth-child(even) td{background:#FAFAF8}
+.compare-table .row-head{background:var(--color-surface);font-weight:500;color:var(--color-text-2);font-size:11px}
+
+/* Chart tab */
+.chart-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem}
+.chart-controls select{padding:6px 10px;border:0.5px solid var(--color-border-mid);border-radius:var(--radius-md);background:var(--color-surface);font-size:12px}
+.chart-wrap{background:var(--color-surface);border:0.5px solid var(--color-border);border-radius:var(--radius-lg);padding:1rem}
+
+/* Responsive */
+@media(max-width:640px){
+  .compare-select-row{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<header>
-<h1>材料热处理与热加工工艺交互汇总</h1>
-<p>基于上传的TC材料、铝合金及综合研究报告整理</p>
-</header>
+<div class="app-shell">
+  <h2 class="sr-only">高端合金材料热加工与热处理工艺交互式数据库，涵盖高温合金、铝合金、钛合金、超高强度钢四大类材料的详细工艺参数。</h2>
 
-<div class="container">
-<div class="card">
-<h3>快速检索</h3>
-<input id="search" placeholder="输入材料牌号，如 TC4、7075、GH4169">
-<p id="result"></p>
-</div>
+  <div class="header">
+    <h1>高端合金材料热加工工艺数据库</h1>
+    <p>基于航空航天材料手册、学术文献及工业规范构建 &nbsp;·&nbsp; 涵盖热处理与热变形工艺参数</p>
+    <div style="margin-top:8px">
+      <span class="badge cat-superalloy">高温合金 2种</span>
+      <span class="badge cat-aluminum">铝合金 7种</span>
+      <span class="badge cat-titanium">钛合金 6种</span>
+      <span class="badge cat-steel">超高强度钢 2种</span>
+    </div>
+  </div>
 
-<div class="tab">
-<button class="tablinks active" onclick="openTab(event,'overview')">总览</button>
-<button class="tablinks" onclick="openTab(event,'titanium')">钛合金</button>
-<button class="tablinks" onclick="openTab(event,'aluminum')">铝合金</button>
-<button class="tablinks" onclick="openTab(event,'steel')">高强钢</button>
-<button class="tablinks" onclick="openTab(event,'nickel')">镍基合金</button>
-</div>
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" role="tab" onclick="switchTab('browse',this)">材料浏览</button>
+    <button class="tab-btn" role="tab" onclick="switchTab('compare',this)">对比查询</button>
+    <button class="tab-btn" role="tab" onclick="switchTab('chart',this)">工艺图表</button>
+  </div>
 
-<div id="overview" class="content" style="display:block">
-<h2>核心结论</h2>
-<ul>
-<li>钛合金以固溶+时效或退火为主，热加工窗口通常在800~1100℃。</li>
-<li>2xxx/7xxx铝合金均采用固溶→淬火→时效(T6/T7)路线。</li>
-<li>300M钢依赖淬火+回火获得超高强度。</li>
-<li>GH4169、GH4698采用多级时效强化γ′/γ″相。</li>
-</ul>
-</div>
+  <!-- ===== BROWSE TAB ===== -->
+  <div id="tab-browse">
+    <div class="filter-row">
+      <span class="filter-label">分类筛选：</span>
+      <button class="chip active" onclick="filterCat('all',this)">全部</button>
+      <button class="chip" onclick="filterCat('superalloy',this)">高温合金</button>
+      <button class="chip" onclick="filterCat('aluminum',this)">铝合金</button>
+      <button class="chip" onclick="filterCat('titanium',this)">钛合金</button>
+      <button class="chip" onclick="filterCat('steel',this)">超高强度钢</button>
+    </div>
+    <div class="search-wrap">
+      <span class="icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="搜索材料牌号、成分、应用..." oninput="doSearch(this.value)">
+    </div>
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
 
-<div id="titanium" class="content">
-<h2>钛合金关键参数</h2>
-<table>
-<tr><th>材料</th><th>固溶/退火温度(℃)</th><th>时效(℃)</th><th>热加工温度(℃)</th></tr>
-<tr><td>TC4</td><td>905~1000</td><td>480~550</td><td>800~1030</td></tr>
-<tr><td>TC18</td><td>650~690 或双退火</td><td>540~600</td><td>750~900</td></tr>
-<tr><td>TC21</td><td>890~910</td><td>560~590</td><td>830~950</td></tr>
-<tr><td>TC17</td><td>788~816</td><td>602~685</td><td>770~950</td></tr>
-<tr><td>TC25</td><td>公开数据有限</td><td>约600(推断)</td><td>950~1100</td></tr>
-<tr><td>TA15</td><td>700~850退火</td><td>通常不采用时效</td><td>900~1020</td></tr>
-</table>
-</div>
+  <!-- ===== COMPARE TAB ===== -->
+  <div id="tab-compare" style="display:none">
+    <div class="compare-select-row">
+      <div>
+        <div style="font-size:12px;color:var(--color-text-2);margin-bottom:6px">材料 A</div>
+        <select id="cmpA" onchange="renderCompare()"></select>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--color-text-2);margin-bottom:6px">材料 B</div>
+        <select id="cmpB" onchange="renderCompare()"></select>
+      </div>
+    </div>
+    <div class="compare-table-wrap" id="compareOut"></div>
+  </div>
 
-<div id="aluminum" class="content">
-<h2>铝合金关键参数</h2>
-<table>
-<tr><th>材料</th><th>固溶(℃)</th><th>时效(℃)</th><th>热加工温度(℃)</th></tr>
-<tr><td>2024/2A12</td><td>495~505</td><td>180~190</td><td>300~450</td></tr>
-<tr><td>2014/2A11</td><td>约505</td><td>约190</td><td>300~450</td></tr>
-<tr><td>2219/2A20</td><td>515~565</td><td>160~190</td><td>300~500</td></tr>
-<tr><td>7075</td><td>约480</td><td>121</td><td>300~450</td></tr>
-<tr><td>7050</td><td>472~477</td><td>121</td><td>300~460</td></tr>
-<tr><td>7010</td><td>约475</td><td>121</td><td>参考7075</td></tr>
-</table>
-</div>
-
-<div id="steel" class="content">
-<h2>超高强钢</h2>
-<table>
-<tr><th>材料</th><th>热处理</th><th>热加工温度</th></tr>
-<tr><td>300M</td><td>871℃奥氏体化+260~316℃回火</td><td>950~1050℃</td></tr>
-<tr><td>A-100</td><td>约870℃淬火+593℃回火(推断)</td><td>900~1000℃</td></tr>
-</table>
-</div>
-
-<div id="nickel" class="content">
-<h2>镍基高温合金</h2>
-<table>
-<tr><th>材料</th><th>固溶(℃)</th><th>时效(℃)</th><th>热加工(℃)</th></tr>
-<tr><td>GH4169</td><td>1020~1080</td><td>720~760 + 620~650</td><td>1000~1050</td></tr>
-<tr><td>GH4698</td><td>1110~1130</td><td>765~785，多级时效</td><td>1110~1130</td></tr>
-</table>
-</div>
+  <!-- ===== CHART TAB ===== -->
+  <div id="tab-chart" style="display:none">
+    <div class="chart-controls">
+      <select id="chartType" onchange="renderCharts()">
+        <option value="temp">热变形温度范围</option>
+        <option value="strain">应变速率范围</option>
+        <option value="ht_temp">热处理温度对比</option>
+      </select>
+    </div>
+    <div class="chart-wrap" style="margin-bottom:1rem">
+      <div style="position:relative;height:420px">
+        <canvas id="mainChart" role="img" aria-label="合金材料热加工参数对比图">暂无数据</canvas>
+      </div>
+    </div>
+    <div id="chartLegend" style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--color-text-2);padding:0 4px"></div>
+  </div>
 </div>
 
 <script>
-function openTab(evt,name){
- document.querySelectorAll('.content').forEach(x=>x.style.display='none');
- document.querySelectorAll('.tablinks').forEach(x=>x.classList.remove('active'));
- document.getElementById(name).style.display='block';
- evt.currentTarget.classList.add('active');
+const MATERIALS = [
+  {
+    id:"GH4698", name:"GH4698", cat:"superalloy",
+    desc:"镍铬基沉淀硬化型变形高温合金",
+    comp:"Ni-Cr-Fe-Mo-Ti-Al",
+    app:"航空用涡轮盘、压气机盘（使用温度750~800℃）",
+    std:"GB/T、航空材料手册",
+    deform:{
+      tempMin:1000, tempMax:1180,
+      bestMin:1000, bestMax:1160,
+      strainMin:0.01, strainMax:1,
+      activation:"425 kJ/mol",
+      mode:"锻造、轧制（多道次）",
+      singlePass:"≤50%",
+      notes:"单次冷变形量≤36%（推荐4~5道次），冷拔后固溶1110℃×1h/AC",
+      table:[
+        ["加热温度","1160~1180℃","开始阶段"],
+        ["最佳塑性区间","1160~1000℃","动态再结晶完全区"],
+        ["工业应变速率","0.01~1 s⁻¹","锻造/轧制"],
+        ["单次变形量","≤50%","防裂纹"],
+        ["冷变形推荐","约36%","4~5道次，每道≤10%"],
+        ["热变形激活能","约425 kJ/mol","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","1110~1130℃","8~8.5h","空冷(AC)","航空锻件标准"],
+        ["最优固溶","1160℃","—","空冷","晶粒最均匀"],
+        ["中间处理","990~1010℃","4~4.5h","空冷","促进γ'相均匀(20~50nm)"],
+        ["标准时效","775℃±10℃","16h","空冷","最终强化"],
+        ["优化双级时效","775℃×16h→700℃×16h","—","空冷","γ'相30~50nm"],
+      ],
+      notes:"最佳路线：1160℃固溶→1000℃中间处理→775℃时效",
+      keyPhase:"γ'相（主强化相）"
+    }
+  },
+  {
+    id:"GH4169", name:"GH4169（Inconel 718）", cat:"superalloy",
+    desc:"镍基高温合金，使用温度-253~700℃",
+    comp:"Ni-Cr-Fe-Nb-Mo-Ti-Al",
+    app:"航空涡轮盘、航天发动机主力结构件",
+    std:"AMS 5662、AMS 5664",
+    deform:{
+      tempMin:900, tempMax:1150,
+      bestMin:950, bestMax:1100,
+      strainMin:0.01, strainMax:0.5,
+      activation:"380 kJ/mol",
+      mode:"锻造、热轧",
+      singlePass:"≤20%",
+      notes:"低速(0.001~0.01 s⁻¹)：δ相球化细化；高速(0.1~1 s⁻¹)：适合热轧但组织可能不均",
+      table:[
+        ["热变形温度","900~1150℃","全范围"],
+        ["最佳塑性区间","950~1100℃","工业推荐"],
+        ["工业应变速率","0.01~0.5 s⁻¹","推荐范围"],
+        ["单次变形量","≤20%","严格控制"],
+        ["总变形量","≥50%","保证组织充分破碎"],
+        ["热变形激活能","约380 kJ/mol","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["高温固溶（制度Ⅰ）","1010~1065℃","1h","快冷","低温高韧性、抗氢脆"],
+        ["标准固溶（制度Ⅱ）","950~980℃","1h","快冷","综合性能均衡（最常用）"],
+        ["直接时效（制度Ⅲ）","省略固溶","—","—","最高强度+冲击性能"],
+        ["一级时效","720℃±5℃","8h","50℃/h炉冷","γ\"相和γ'相析出"],
+        ["二级时效","620℃±5℃","8h","空冷","强化相稳定长大"],
+      ],
+      notes:"冷却速率>100℃/min时γ\"相几乎完全溶解；标准双级时效：720℃×8h→620℃×8h",
+      keyPhase:"γ\"相+γ'相（双相协同强化）"
+    }
+  },
+  {
+    id:"2014", name:"2014铝合金", cat:"aluminum",
+    desc:"Al-Cu-Mg-Si系，高强锻造合金",
+    comp:"Al-4.5Cu-0.8Mg-0.8Si-0.8Mn",
+    app:"飞机结构件、重型锻件、螺旋桨",
+    std:"AMS 2770",
+    deform:{
+      tempMin:300, tempMax:500,
+      bestMin:350, bestMax:480,
+      strainMin:0.005, strainMax:0.1,
+      activation:"181~541 kJ/mol",
+      mode:"锻造、挤压、轧制",
+      singlePass:"—",
+      notes:"稳定窗口Ⅰ：350~430℃/0.005~0.1 s⁻¹；窗口Ⅱ：450~480℃/0.001~0.05 s⁻¹；均匀化：490℃×12h",
+      table:[
+        ["热变形温度","300~500℃","全范围"],
+        ["推荐窗口Ⅰ","350~430℃，0.005~0.1 s⁻¹","最佳"],
+        ["推荐窗口Ⅱ","450~480℃，0.001~0.05 s⁻¹","高温低速"],
+        ["均匀化退火","490℃×12h 或 510℃","铸锭开坯前"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","496~507℃","10~30min(薄板)/1h/in(锻件)","快速水淬","避免共晶相过烧"],
+        ["自然时效T4/T42","室温","≥96h","—","W状态稳定后"],
+        ["人工时效T6（板）","154~166℃","17~18h","空冷","—"],
+        ["人工时效T6（锻件）","166~177℃","9~11h","空冷","—"],
+        ["人工时效T61（锻件）","171~182℃","5~14h","空冷","兼顾强韧性"],
+        ["完全退火O","400~425℃","2~3h","≤28℃/h炉冷至235℃，空冷","—"],
+      ],
+      notes:"固溶温度上限约507℃，超过会发生共晶过烧",
+      keyPhase:"θ'(Al₂Cu)、S'(Al₂CuMg)析出强化"
+    }
+  },
+  {
+    id:"2024", name:"2024铝合金", cat:"aluminum",
+    desc:"Al-Cu-Mg系，高强耐疲劳，航空首选",
+    comp:"Al-4.4Cu-1.5Mg-0.6Mn",
+    app:"飞机蒙皮、翼梁、隔框（使用最广泛的结构铝合金）",
+    std:"AMS 2770",
+    deform:{
+      tempMin:250, tempMax:493,
+      bestMin:350, bestMax:450,
+      strainMin:0.001, strainMax:0.1,
+      activation:"—",
+      mode:"轧制、锻造、成形",
+      singlePass:"—",
+      notes:"超过450℃延展性急剧下降，发生晶界开裂；93~121℃温成形可降低加工硬化率",
+      table:[
+        ["热变形温度","250~493℃","全范围"],
+        ["最佳流变温度","350~450℃","延展性最大"],
+        ["推荐应变速率","0.001~0.1 s⁻¹","工业窗口"],
+        ["温成形辅助","93~121℃","降低加工硬化"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","488~499℃（推荐500℃）","1h","水淬(>100℃/s)","550℃会过烧，晶粒粗化至61µm"],
+        ["自然时效T4/T42","室温","≥96h","—","—"],
+        ["人工时效T81/T6","185~196℃","11~12h","空冷","薄板→T81，线棒→T6"],
+        ["人工时效T72","185~196℃","15~16h","空冷","兼顾耐蚀性"],
+        ["完全退火","400~425℃","1~3h","≤28℃/h冷至235℃","—"],
+      ],
+      notes:"淬火速率关键(>100℃/s)；T3状态（冷作变形2%）常用于薄板疲劳改善",
+      keyPhase:"S'(Al₂CuMg)主强化相，兼θ'(Al₂Cu)"
+    }
+  },
+  {
+    id:"2219", name:"2219铝合金", cat:"aluminum",
+    desc:"Al-Cu-Mn系，高强耐热，低温韧性优异",
+    comp:"Al-6.3Cu-0.3Mn-0.18Zr-0.1V-0.06Ti",
+    app:"航天运载火箭燃料贮箱、高温结构件（-270~300℃）",
+    std:"AMS 2770",
+    deform:{
+      tempMin:300, tempMax:500,
+      bestMin:400, bestMax:500,
+      strainMin:0.1, strainMax:1.0,
+      activation:"—",
+      mode:"轧制、锻造",
+      singlePass:"—",
+      notes:"稳定窗口Ⅰ：300~387℃/0.01 s⁻¹；窗口Ⅱ：417~500℃/0.01~0.6 s⁻¹；均匀化：535℃×12h空冷",
+      table:[
+        ["热变形温度","300~500℃","全范围"],
+        ["推荐应变速率","0.1~1.0 s⁻¹","最优"],
+        ["稳定窗口Ⅰ","300~387℃，0.01 s⁻¹","低温低速"],
+        ["稳定窗口Ⅱ","417~500℃，0.01~0.6 s⁻¹","高温"],
+        ["均匀化处理","535℃×12h，空冷","开坯前必须"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","529~541℃","5~40min(薄板)","水淬","淬火转移≤10s"],
+        ["自然时效T4","室温","≥96h","—","—"],
+        ["人工时效T81","171~182℃(挤压185~196℃)","17~18h","空冷","冷变形件"],
+        ["人工时效T87","157~168℃","23~25h","空冷","重冷作件"],
+        ["人工时效T6(锻)","185~196℃","25~26h","空冷","锻件标准"],
+        ["快速时效（高强）","210℃","4h","空冷","抗拉410.9MPa，硬度113.76HV"],
+      ],
+      notes:"淬火转移时间≤10s；T87状态为强变形件最优时效制度",
+      keyPhase:"θ'(Al₂Cu)，含Zr/V弥散相抑制再结晶"
+    }
+  },
+  {
+    id:"2618", name:"2618铝合金", cat:"aluminum",
+    desc:"Al-Cu-Mg-Fe-Ni系，高强耐热（200℃以下）",
+    comp:"Al-2.3Cu-1.6Mg-1.0Fe-1.0Ni-0.07Si",
+    app:"航空发动机活塞、压缩机叶轮、高温结构件",
+    std:"AMS 2770",
+    deform:{
+      tempMin:200, tempMax:500,
+      bestMin:350, bestMax:450,
+      strainMin:0.01, strainMax:10,
+      activation:"181 kJ/mol",
+      mode:"锻造、挤压",
+      singlePass:"—",
+      notes:"300~400℃主要为动态回复；450℃+极低速(约0.01 s⁻¹)发生动态再结晶；温加工窗口：约300℃/0.01 s⁻¹",
+      table:[
+        ["热变形温度","200~500℃","全范围"],
+        ["推荐高温慢速","350~450℃，约0.01 s⁻¹","动态再结晶窗口"],
+        ["推荐温加工低速","约300℃，约0.01 s⁻¹","动态回复为主"],
+        ["热变形激活能","181 kJ/mol","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","524~535℃","530℃×5h","水淬","大型锻件可用沸水淬火"],
+        ["自然时效T4","室温","≥96h","—","—"],
+        ["人工时效T61（模锻）","193~204℃","19~21h","空冷","标准制度"],
+        ["峰值时效方案1","175℃","36h","空冷","低温长时"],
+        ["峰值时效方案2","195℃","10h","空冷","中温中时"],
+        ["峰值时效方案3","215℃","1h","空冷","高温短时"],
+        ["晶界精细化（先进）","535℃→470℃→535℃(多步)","各10~30min","水淬后时效","强度+5%，冲击韧性+23.7%"],
+      ],
+      notes:"大型锻件采用沸水淬火可减小畸变；晶界精细化三步固溶工艺显著改善韧性",
+      keyPhase:"S'(Al₂CuMg)，含FeNi弥散相稳定晶界"
+    }
+  },
+  {
+    id:"7075", name:"7075铝合金", cat:"aluminum",
+    desc:"Al-Zn-Mg-Cu系，超高强度航空铝合金",
+    comp:"Al-5.6Zn-2.5Mg-1.6Cu-0.23Cr",
+    app:"飞机大梁、翼肋、起落架（使用最广泛的超高强铝合金）",
+    std:"AMS 2770",
+    deform:{
+      tempMin:300, tempMax:500,
+      bestMin:375, bestMax:465,
+      strainMin:0.001, strainMax:1,
+      activation:"143~147 kJ/mol",
+      mode:"锻造、轧制、挤压",
+      singlePass:"—",
+      notes:"失稳区Ⅰ：360~450℃/0.04~1 s⁻¹（剪切带裂纹）；失稳区Ⅱ：300~315℃/0.01~0.22 s⁻¹；温成形最佳200℃；超过500℃晶界液化",
+      table:[
+        ["热变形温度","300~500℃(上限<500℃)","超过500℃晶界液化"],
+        ["铸态铸锭最佳窗口","425~465℃，0.01~1.0 s⁻¹","高能耗散区"],
+        ["变形管板件推荐","375~450℃，0.001~0.03 s⁻¹","低速窗口"],
+        ["失稳危险区Ⅰ","360~450℃，0.04~1 s⁻¹","严禁"],
+        ["失稳危险区Ⅱ","300~315℃，0.01~0.22 s⁻¹","严禁"],
+        ["热变形激活能","143~147 kJ/mol（方向相关）","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","460~499℃（典型482℃）","2h","快速淬火50℃/s","淬火敏感度极高"],
+        ["T6单级时效","120~121℃","24h","空冷","最高强度，SCC风险高"],
+        ["T73双级时效","107℃→163℃","8h→24h","空冷","强度降10~15%，耐蚀大幅提升"],
+        ["RRA(T77)回归再时效","120℃/24h→180~280℃/5~2400s→再120℃/24h","—","—","兼顾强度与抗SCC"],
+        ["完全退火","413℃","3h","28℃/h炉冷至260℃","—"],
+      ],
+      notes:"淬火敏感度极高，厚截面需快速淬火；T77工艺可在保持高强度同时达到T73耐蚀水平",
+      keyPhase:"MgZn₂(η'相)主强化，含Al₃Zn₃Mg₂"
+    }
+  },
+  {
+    id:"7050", name:"7050铝合金", cat:"aluminum",
+    desc:"超厚截面，高断裂韧性，抗SCC",
+    comp:"Al-6.2Zn-2.2Mg-2.3Cu-0.12Zr",
+    app:"飞机厚截面结构件（机身框、翼梁），尤其适合>100mm厚板",
+    std:"AMS 2770",
+    deform:{
+      tempMin:300, tempMax:450,
+      bestMin:410, bestMax:450,
+      strainMin:0.001, strainMax:1,
+      activation:"—",
+      mode:"轧制、锻造",
+      singlePass:"—",
+      notes:"最佳加工窗口：410~450℃/0.001~1 s⁻¹（耗散系数η=20%~40%）；超低速安全窗口：410~460℃/0.0001~0.001 s⁻¹",
+      table:[
+        ["热变形温度","300~450℃","全范围"],
+        ["最佳加工窗口","410~450℃，0.001~1 s⁻¹","η=20~40%"],
+        ["超低速安全窗口","410~460℃，0.0001~0.001 s⁻¹","最优组织"],
+        ["软化机制","均匀动态再结晶","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","471~482℃","—","严格控制淬火对流速度","保证厚截面均匀性"],
+        ["T74双级时效","115~125℃→158~165℃","6~8h→24~27h","空冷","强度、韧性、抗SCC平衡"],
+        ["T76双级时效","115~125℃→158~165℃","6~8h→15~18h","空冷","极端抗剥落腐蚀"],
+      ],
+      notes:"严格控制保温时间与淬火对流速度，确保厚截面材料组织均匀；T74为航空厚板标准制度",
+      keyPhase:"MgZn₂(η'相)，含Zr弥散相控制再结晶"
+    }
+  },
+  {
+    id:"TC4", name:"TC4（Ti-6Al-4V）", cat:"titanium",
+    desc:"α+β型钛合金，应用最广泛，Tβ≈1000℃",
+    comp:"Ti-6Al-4V",
+    app:"航空结构件（约占钛合金总产量50%），发动机风扇叶片、机身框架",
+    std:"AMS 4928、GJB",
+    deform:{
+      tempMin:900, tempMax:960,
+      bestMin:900, bestMax:960,
+      strainMin:0.01, strainMax:1,
+      activation:"—",
+      mode:"锻造（α+β两相区热变形为主）",
+      singlePass:"—",
+      notes:"α+β区热变形为主（Tβ附近或略低）；应变速率0.01~1 s⁻¹（热压缩试验参数）",
+      table:[
+        ["热锻温度","900~960℃","α+β区，Tβ附近"],
+        ["变形区","α+β两相区","主要"],
+        ["典型应变速率","0.01~1 s⁻¹","热压缩试验"],
+      ]
+    },
+    ht:{
+      table:[
+        ["退火（应力消除）","700~800℃","数小时","空冷","消除残余应力"],
+        ["固溶处理","930~950℃","1~2h","水冷","β相部分溶解"],
+        ["改进固溶","950℃/1.5h→760~780℃/2.5h","—","水淬/空冷","多级处理改善强韧性"],
+        ["时效处理","480~540℃","4~6h","空冷","析出细片状α相强化"],
+        ["综合改进工艺","950℃固溶→760~780℃退火→530℃×6~8h","—","—","显著提升室高温强度"],
+      ],
+      notes:"水冷后残余应力较大，需进行应力消除退火；Tβ以上固溶会导致晶粒粗大",
+      keyPhase:"细片状α相析出强化"
+    }
+  },
+  {
+    id:"TC17", name:"TC17（Ti-5Al-2Sn-2Zr-4Mn-4Cr）", cat:"titanium",
+    desc:"富β型α+β合金，高强韧，Tβ≈850℃",
+    comp:"Ti-5Al-2Sn-2Zr-4Mn-4Cr",
+    app:"航空发动机风扇、压气机盘（承受高应力疲劳）",
+    std:"AMS、GJB",
+    deform:{
+      tempMin:800, tempMax:900,
+      bestMin:840, bestMax:900,
+      strainMin:0.001, strainMax:1,
+      activation:"—",
+      mode:"β锻或α+β区锻造",
+      singlePass:"—",
+      notes:"β锻：约800℃（Tβ附近）；α+β锻：840~900℃；应变速率0.001~1 s⁻¹",
+      table:[
+        ["β锻温度","约800℃","Tβ附近"],
+        ["α+β锻温度","840~900℃","推荐"],
+        ["典型应变速率","0.001~1 s⁻¹","参考值"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理（β锻件）","800±10℃","4h","水淬","—"],
+        ["固溶处理（α+β锻件）","840±10℃/1h空冷→800±10℃/4h","—","水淬","双步处理"],
+        ["时效处理","585~685℃（推荐630℃）","8h","空冷","析出均质细小α相"],
+        ["去应力退火","480~650℃（常用550℃）","1~4h","空冷或炉冷","—"],
+      ],
+      notes:"630℃时效可获得最均匀细小α相，高温韧性最优；β锻件比α+β锻件需更严格固溶温度控制",
+      keyPhase:"细小均质α相析出强化"
+    }
+  },
+  {
+    id:"TC18", name:"TC18（Ti-5Al-5V-5Mo-1Cr-1Fe）", cat:"titanium",
+    desc:"高强近β型钛合金，Tβ≈980℃",
+    comp:"Ti-5Al-5V-5Mo-1Cr-1Fe",
+    app:"大型飞机起落架、承力接头、高强结构件（强度可达1200MPa+）",
+    std:"GJB、航空材料手册",
+    deform:{
+      tempMin:900, tempMax:950,
+      bestMin:900, bestMax:950,
+      strainMin:0.01, strainMax:1,
+      activation:"—",
+      mode:"α+β区高温锻造",
+      singlePass:"—",
+      notes:"热锻温度：Tβ-30~50℃（约900~950℃）；优选快速淬火8~15℃/s固溶时效路线",
+      table:[
+        ["热锻温度","900~950℃（Tβ-30~50℃）","α+β区"],
+        ["典型应变速率","0.01~1 s⁻¹","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["路线一：高温退火","820~850℃","1~3h","炉冷","双重退火第一步"],
+        ["路线一：中温保温","740~760℃","1~3h","空冷","双重退火第二步"],
+        ["路线一：时效","500~650℃","2~6h","空冷","析出α相"],
+        ["路线二：固溶处理","Tβ-60~100℃（≈880~920℃）","2~8h","快淬8~15℃/s","固溶+时效路线"],
+        ["路线二：时效","540~600℃","4~12h","空冷","最终强化"],
+      ],
+      notes:"快速淬火(8~15℃/s)是路线二关键；双重退火路线适合大型锻件减少残余应力",
+      keyPhase:"细α相（从亚稳β基体析出）"
+    }
+  },
+  {
+    id:"TC21", name:"TC21（Ti-6Al-2Sn-4Zr-3Mo-1Cr-2Nb）", cat:"titanium",
+    desc:"高强韧α+β型，Tβ≈950~960℃",
+    comp:"Ti-6Al-2Sn-4Zr-3Mo-1Cr-2Nb",
+    app:"高强韧航空承力件，强度1150~1250MPa",
+    std:"GJB",
+    deform:{
+      tempMin:900, tempMax:980,
+      bestMin:900, bestMax:940,
+      strainMin:0.001, strainMax:1,
+      activation:"—",
+      mode:"β区初锻+α+β区精锻",
+      singlePass:"—",
+      notes:"初锻在β区(≈980℃)，变形量≥70%多次镦拔；精锻在α+β区(900~940℃)；应变速率0.001~1 s⁻¹",
+      table:[
+        ["初锻温度","Tβ+30℃（≈980℃）","β区"],
+        ["精锻温度","900~940℃","α+β区"],
+        ["初锻变形量","≥70%（多次镦拔）","破碎铸态组织"],
+        ["典型应变速率","0.001~1 s⁻¹","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["固溶处理","930℃","1h","水淬",">930℃会增粗α片层"],
+        ["时效处理","550℃","6h","空冷","针状α/β优化组织"],
+      ],
+      notes:"固溶温度严格控制≤930℃；目标性能：室温抗拉强度1150~1250MPa",
+      keyPhase:"针状α/β交替组织"
+    }
+  },
+  {
+    id:"TA15", name:"TA15（Ti-6.5Al-2Zr-1Mo-1V）", cat:"titanium",
+    desc:"近α高温钛合金，Tβ≈890~900℃",
+    comp:"Ti-6.5Al-2Zr-1Mo-1V",
+    app:"航空发动机压气机转子叶片、机身高温结构件（使用温度<500℃）",
+    std:"GJB、航空材料手册",
+    deform:{
+      tempMin:950, tempMax:980,
+      bestMin:950, bestMax:980,
+      strainMin:0.01, strainMax:1,
+      activation:"—",
+      mode:"α+β区热锻",
+      singlePass:"40~60%",
+      notes:"变形量40~60%防止晶粒粗化；避免水冷（易变形）；Tβ≈890~900℃，锻造在α+β区(Tβ-30~50℃)",
+      table:[
+        ["热锻温度","950~980℃（Tβ-30~50℃）","α+β区"],
+        ["变形量","40~60%","防晶粒粗化"],
+        ["典型应变速率","0.01~1 s⁻¹","—"],
+      ]
+    },
+    ht:{
+      table:[
+        ["真空退火（主工艺）","800~850℃","1~2h","炉冷或控速空冷","避免水冷（易变形）"],
+        ["应力消除时效","500~600℃（常用550℃）","4h","空冷","类似α合金工艺"],
+      ],
+      notes:"热处理温度一般不超过800℃（早期资料）；真空退火+炉冷为主要工业工艺",
+      keyPhase:"片层状α相为主，含少量β相"
+    }
+  },
+  {
+    id:"A100", name:"A100钢（AerMet 100）", cat:"steel",
+    desc:"钴镍基二次硬化型超高强度马氏体钢",
+    comp:"Co(13~14%)-Ni(11~12%)-Cr-Mo-C",
+    app:"F-22/F-18E/F起落架、导弹壳体、火箭发动机壳体、舰载机弹射机构",
+    std:"GJB 9450-2018 / AMS 6532",
+    deform:{
+      tempMin:900, tempMax:1100,
+      bestMin:1000, bestMax:1100,
+      strainMin:0.01, strainMax:0.1,
+      activation:"—",
+      mode:"锻造",
+      singlePass:"—",
+      notes:"高能量耗散区：900~1050℃/0.01~0.1 s⁻¹和1050~1100℃/0.1~1 s⁻¹；动态再结晶临界应变与峰值应变比值≈0.459",
+      table:[
+        ["主变形温度Ⅰ","900~1050℃","—"],
+        ["主变形温度Ⅱ","1050~1100℃","—"],
+        ["DRX完全发生窗口","980~1080℃","均匀等轴晶"],
+        ["推荐应变速率Ⅰ","0.01~0.1 s⁻¹","低速高耗散"],
+        ["推荐应变速率Ⅱ","0.1~1 s⁻¹","中速"],
+        ["不推荐区间","<850℃或>10 s⁻¹","组织粗大纤维状"],
+        ["临界应变/峰值应变","≈0.459","DRX关键参数"],
+      ]
+    },
+    ht:{
+      table:[
+        ["正火","899℃（1650°F）","1h","空冷","消除锻造应力"],
+        ["过老化退火（可选）","677℃","16h","—","加工软化，HRC≤40"],
+        ["固溶处理","885℃±14℃","1h","空冷至≤66℃","必须在中性/真空/盐浴炉"],
+        ["冷处理","−73℃（−100°F）","1h","—","消除残余奥氏体，提高韧性"],
+        ["低温应力消除（可选）","177~204℃","5h","—","优化延展性与屈服强度"],
+        ["时效处理","482℃±6℃（900°F±10°F）","5h","—","温度≥468℃（875°F）"],
+      ],
+      notes:"脱碳控制：必须在中性气氛/盐浴/真空炉中热处理；电镀等涉氢工艺后必须严格除氢（氢脆敏感）",
+      keyPhase:"马氏体基体+M₂C碳化物二次硬化"
+    }
+  },
+  {
+    id:"300M", name:"300M钢（40CrNi2Si2MoVA）", cat:"steel",
+    desc:"硅镍铬钼钒高强度钢，横向塑性突出",
+    comp:"C(0.38~0.43%)-Si(1.45~1.8%)-Mn-Ni-Cr-Mo-V",
+    app:"C919/波音/空客起落架、发动机齿轮、大型运输机承力结构",
+    std:"GJB 5063-2001 / GB/T 3077",
+    deform:{
+      tempMin:900, tempMax:1100,
+      bestMin:900, bestMax:1050,
+      strainMin:0.01, strainMax:1.8,
+      activation:"—",
+      mode:"锻造（开坯+精锻两步）",
+      singlePass:"—",
+      notes:"终锻温度≥850℃（低于此值易产生裂纹）；应变速率1.8 s⁻¹是DRX机制转变分界点；完全DRX条件：≥1150℃+应变速率≥10 s⁻¹",
+      table:[
+        ["开坯锻造","1232℃（2250°F）","—"],
+        ["精锻","982℃（1800°F）","—"],
+        ["终锻温度下限","≥850℃","严禁低于此温度"],
+        ["工业推荐应变速率","0.01~1.8 s⁻¹","—"],
+        ["完全DRX条件","≥1150℃，应变速率≥10 s⁻¹","—"],
+        ["DRX机制转变点","应变速率1.8 s⁻¹","非连续→连续"],
+        ["临界应变/峰值应变","≈0.459","同A100钢"],
+      ]
+    },
+    ht:{
+      table:[
+        ["正火（预备）","925℃","—","空冷","细化晶粒，消除锻造应力"],
+        ["高温回火（预备）","700℃","—","空冷","进一步稳定组织"],
+        ["奥氏体化","870℃±15℃","30~60min","—","形成均匀奥氏体"],
+        ["淬火","—","—","油淬至室温","获得高硬度马氏体"],
+        ["回火（×2次）","300℃±5℃","约2h/次","空冷","必须两次，消除淬火应力"],
+        ["退火（机加工前）","677℃","16h","—","软化至HRC≤40"],
+      ],
+      notes:"必须进行两次回火，不可省略；电镀等涉氢工艺后必须及时除氢处理（氢脆敏感）",
+      keyPhase:"马氏体基体+Si抑制第一类回火脆性"
+    }
+  }
+];
+
+// ===== UTILITIES =====
+let activeTab = "browse";
+let activeCat = "all";
+let searchQ = "";
+let chartInstance = null;
+
+function getFiltered(){
+  return MATERIALS.filter(m=>{
+    if(activeCat!=="all"&&m.cat!==activeCat) return false;
+    if(!searchQ) return true;
+    const q=searchQ.toLowerCase();
+    return (m.name+m.desc+m.comp+m.app+m.id).toLowerCase().includes(q);
+  });
 }
-const data={TC4:'Ti-6Al-4V，航空应用最广泛',TC18:'近β钛合金',TC21:'高强损伤容限钛合金',
-TC17:'高强α+β钛合金',TA15:'近α钛合金',7075:'高强铝合金',GH4169:'对应Inconel718体系'};
-document.getElementById('search').addEventListener('input',e=>{
- document.getElementById('result').innerText=data[e.target.value]||'';
-});
+
+// ===== BROWSE TAB =====
+function renderCards(){
+  const grid=document.getElementById("cardsGrid");
+  const items=getFiltered();
+  if(!items.length){grid.innerHTML='<p style="color:var(--color-text-3);padding:2rem 0">未找到匹配的材料</p>';return;}
+  grid.innerHTML=items.map(m=>`
+    <div class="m-card" id="card-${m.id}" onclick="toggleCard('${m.id}')">
+      <div class="m-card-head">
+        <div>
+          <div class="m-card-title">${m.name}</div>
+          <div class="m-card-sub">${m.desc}</div>
+          <div style="font-size:11px;color:var(--color-text-3);margin-top:3px">${m.comp}</div>
+        </div>
+        <div class="m-card-cat">
+          <span class="cat-tag cat-${m.cat}">${catLabel(m.cat)}</span>
+        </div>
+      </div>
+      <div class="m-card-metrics">
+        <div class="metric-item">
+          <div class="metric-label">热变形温度</div>
+          <div class="metric-val">${m.deform.tempMin}~${m.deform.tempMax}℃</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">推荐应变速率</div>
+          <div class="metric-val">${m.deform.strainMin}~${m.deform.strainMax} s⁻¹</div>
+        </div>
+      </div>
+      <div class="m-detail" id="detail-${m.id}">
+        ${renderDetail(m)}
+      </div>
+    </div>
+  `).join("");
+}
+
+function toggleCard(id){
+  const card=document.getElementById("card-"+id);
+  const det=document.getElementById("detail-"+id);
+  const open=det.classList.contains("open");
+  det.classList.toggle("open",!open);
+  card.classList.toggle("expanded",!open);
+}
+
+function renderDetail(m){
+  const htRows=m.ht.table.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]||"—"}</td></tr>`).join("");
+  const dRows=m.deform.table.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]||"—"}</td></tr>`).join("");
+  return `
+    <div class="detail-section">
+      <div class="detail-title">热处理工艺</div>
+      <div style="font-size:11px;color:var(--color-text-3);margin-bottom:6px">主强化相：${m.ht.keyPhase}</div>
+      <div style="overflow-x:auto">
+      <table class="proc-table">
+        <thead><tr><th>工艺步骤</th><th>温度</th><th>时间</th><th>冷却</th><th>说明</th></tr></thead>
+        <tbody>${htRows}</tbody>
+      </table>
+      </div>
+      <div class="note-box">${m.ht.notes}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">热变形工艺</div>
+      <div style="overflow-x:auto">
+      <table class="proc-table">
+        <thead><tr><th>参数</th><th>数值</th><th>说明</th></tr></thead>
+        <tbody>${dRows}</tbody>
+      </table>
+      </div>
+      <div class="note-box warn">${m.deform.notes}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-title">应用场合</div>
+      <div style="font-size:12px;color:var(--color-text-2)">${m.app}</div>
+      <div style="font-size:11px;color:var(--color-text-3);margin-top:4px">执行标准：${m.std}</div>
+    </div>
+  `;
+}
+
+function catLabel(c){
+  const m={superalloy:"高温合金",aluminum:"铝合金",titanium:"钛合金",steel:"超高强度钢"};
+  return m[c]||c;
+}
+
+function filterCat(cat,el){
+  activeCat=cat;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  el.classList.add("active");
+  renderCards();
+}
+
+function doSearch(q){
+  searchQ=q;
+  renderCards();
+}
+
+// ===== COMPARE TAB =====
+function initCompareSelects(){
+  const sel=["cmpA","cmpB"];
+  sel.forEach((id,i)=>{
+    const s=document.getElementById(id);
+    s.innerHTML=MATERIALS.map(m=>`<option value="${m.id}">${m.name}</option>`).join("");
+    s.selectedIndex=i;
+  });
+  renderCompare();
+}
+
+function renderCompare(){
+  const idA=document.getElementById("cmpA").value;
+  const idB=document.getElementById("cmpB").value;
+  const A=MATERIALS.find(m=>m.id===idA);
+  const B=MATERIALS.find(m=>m.id===idB);
+  if(!A||!B){return;}
+  const rows=[
+    ["类别",catLabel(A.cat),catLabel(B.cat)],
+    ["成分体系",A.comp,B.comp],
+    ["应用场合",A.app,B.app],
+    ["执行标准",A.std,B.std],
+    ["主强化相",A.ht.keyPhase,B.ht.keyPhase],
+    ["热变形温度范围",A.deform.tempMin+"~"+A.deform.tempMax+"℃",B.deform.tempMin+"~"+B.deform.tempMax+"℃"],
+    ["最佳热变形温度",A.deform.bestMin+"~"+A.deform.bestMax+"℃",B.deform.bestMin+"~"+B.deform.bestMax+"℃"],
+    ["推荐应变速率",A.deform.strainMin+"~"+A.deform.strainMax+" s⁻¹",B.deform.strainMin+"~"+B.deform.strainMax+" s⁻¹"],
+    ["热变形激活能",A.deform.activation,B.deform.activation],
+    ["变形方式",A.deform.mode,B.deform.mode],
+    ["单次变形量",A.deform.singlePass||"—",B.deform.singlePass||"—"],
+    ["热变形注意事项",A.deform.notes,B.deform.notes],
+    ["热处理工艺要点",A.ht.notes,B.ht.notes],
+  ];
+  const html=`
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:140px">参数</th>
+          <th style="color:#185FA5">${A.name}</th>
+          <th style="color:#3B6D11">${B.name}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r=>`<tr><td class="row-head">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+  document.getElementById("compareOut").innerHTML=html;
+}
+
+// ===== CHART TAB =====
+function renderCharts(){
+  const type=document.getElementById("chartType").value;
+  const canvas=document.getElementById("mainChart");
+  if(chartInstance){chartInstance.destroy();chartInstance=null;}
+
+  const catColors={
+    superalloy:{bg:"rgba(83,74,183,0.7)",border:"#534AB7"},
+    aluminum:{bg:"rgba(59,109,17,0.7)",border:"#3B6D11"},
+    titanium:{bg:"rgba(15,110,86,0.7)",border:"#0F6E56"},
+    steel:{bg:"rgba(153,60,29,0.7)",border:"#993C1D"},
+  };
+
+  if(type==="temp"){
+    const labels=MATERIALS.map(m=>m.id);
+    const minData=MATERIALS.map(m=>m.deform.bestMin);
+    const maxData=MATERIALS.map(m=>m.deform.bestMax-m.deform.bestMin);
+    const bgColors=MATERIALS.map(m=>catColors[m.cat].bg);
+    const borderColors=MATERIALS.map(m=>catColors[m.cat].border);
+    chartInstance=new Chart(canvas,{
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          {label:"起始温度",data:minData,backgroundColor:"rgba(200,200,200,0.4)",borderColor:"#aaa",borderWidth:0.5,stack:"s"},
+          {label:"最佳热变形温度区间",data:maxData,backgroundColor:bgColors,borderColor:borderColors,borderWidth:1,stack:"s"},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        scales:{
+          x:{ticks:{autoSkip:false,maxRotation:45,font:{size:11}},stacked:true},
+          y:{title:{display:true,text:"温度 (℃)"},stacked:false,min:0}
+        },
+        plugins:{legend:{display:false},tooltip:{callbacks:{
+          label:(c)=>{
+            if(c.datasetIndex===1){
+              const m=MATERIALS[c.dataIndex];
+              return `最佳区间: ${m.deform.bestMin}~${m.deform.bestMax}℃`;
+            }
+            return null;
+          }
+        }}}
+      }
+    });
+    renderLegend(["高温合金","铝合金","钛合金","超高强度钢"],["#534AB7","#3B6D11","#0F6E56","#993C1D"]);
+  } else if(type==="strain"){
+    const labels=MATERIALS.map(m=>m.id);
+    const minData=MATERIALS.map(m=>Math.log10(m.deform.strainMin));
+    const rangeData=MATERIALS.map(m=>Math.log10(m.deform.strainMax)-Math.log10(m.deform.strainMin));
+    const bgColors=MATERIALS.map(m=>catColors[m.cat].bg);
+    const borderColors=MATERIALS.map(m=>catColors[m.cat].border);
+    chartInstance=new Chart(canvas,{
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          {label:"起始（log）",data:minData,backgroundColor:"rgba(200,200,200,0.3)",borderWidth:0,stack:"s"},
+          {label:"推荐应变速率区间(log₁₀)",data:rangeData,backgroundColor:bgColors,borderColor:borderColors,borderWidth:1,stack:"s"},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        scales:{
+          x:{ticks:{autoSkip:false,maxRotation:45,font:{size:11}},stacked:true},
+          y:{title:{display:true,text:"log₁₀(应变速率 / s⁻¹)"},stacked:false,
+             ticks:{callback:v=>`10^${v}`}}
+        },
+        plugins:{legend:{display:false},tooltip:{callbacks:{
+          label:(c)=>{
+            if(c.datasetIndex===1){
+              const m=MATERIALS[c.dataIndex];
+              return `推荐: ${m.deform.strainMin}~${m.deform.strainMax} s⁻¹`;
+            }
+            return null;
+          }
+        }}}
+      }
+    });
+    renderLegend(["高温合金","铝合金","钛合金","超高强度钢"],["#534AB7","#3B6D11","#0F6E56","#993C1D"]);
+  } else if(type==="ht_temp"){
+    // 固溶温度对比 - 提取第一个固溶/奥氏体化步骤温度
+    const htData={
+      superalloy:[1160,1010],aluminum:[500,482,535,530,499,477,482],titanium:[950,820,900,930,985,825],steel:[885,870]
+    };
+    const selected=[
+      {name:"GH4698固溶",val:1160,cat:"superalloy"},
+      {name:"GH4698中间处理",val:1000,cat:"superalloy"},
+      {name:"GH4169固溶(标准)",val:965,cat:"superalloy"},
+      {name:"GH4169时效1",val:720,cat:"superalloy"},
+      {name:"2014固溶",val:502,cat:"aluminum"},
+      {name:"2024固溶",val:494,cat:"aluminum"},
+      {name:"2219固溶",val:535,cat:"aluminum"},
+      {name:"2618固溶",val:530,cat:"aluminum"},
+      {name:"7075固溶",val:482,cat:"aluminum"},
+      {name:"7050固溶",val:477,cat:"aluminum"},
+      {name:"TC4固溶",val:940,cat:"titanium"},
+      {name:"TC17固溶",val:800,cat:"titanium"},
+      {name:"TC18固溶",val:900,cat:"titanium"},
+      {name:"TC21固溶",val:930,cat:"titanium"},
+      {name:"TA15退火",val:825,cat:"titanium"},
+      {name:"A100固溶",val:885,cat:"steel"},
+      {name:"A100时效",val:482,cat:"steel"},
+      {name:"300M奥氏体化",val:870,cat:"steel"},
+      {name:"300M回火",val:300,cat:"steel"},
+    ];
+    chartInstance=new Chart(canvas,{
+      type:"bar",
+      data:{
+        labels:selected.map(d=>d.name),
+        datasets:[{
+          label:"热处理温度",
+          data:selected.map(d=>d.val),
+          backgroundColor:selected.map(d=>catColors[d.cat].bg),
+          borderColor:selected.map(d=>catColors[d.cat].border),
+          borderWidth:1
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,indexAxis:"y",
+        layout:{padding:{right:40}},
+        scales:{
+          x:{title:{display:true,text:"温度 (℃)"},min:0,max:1300},
+          y:{ticks:{font:{size:11}}}
+        },
+        plugins:{legend:{display:false}}
+      }
+    });
+    renderLegend(["高温合金","铝合金","钛合金","超高强度钢"],["#534AB7","#3B6D11","#0F6E56","#993C1D"]);
+    canvas.parentElement.style.height="680px";
+  }
+}
+
+function renderLegend(labels,colors){
+  const wrap=document.getElementById("chartLegend");
+  wrap.innerHTML=labels.map((l,i)=>`
+    <span style="display:flex;align-items:center;gap:4px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};display:inline-block"></span>${l}
+    </span>
+  `).join("");
+}
+
+// ===== TAB SWITCH =====
+function switchTab(tab,el){
+  activeTab=tab;
+  document.getElementById("tab-browse").style.display=tab==="browse"?"block":"none";
+  document.getElementById("tab-compare").style.display=tab==="compare"?"block":"none";
+  document.getElementById("tab-chart").style.display=tab==="chart"?"block":"none";
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+  if(tab==="compare") initCompareSelects();
+  if(tab==="chart") renderCharts();
+}
+
+// Init
+renderCards();
 </script>
 </body>
 </html>

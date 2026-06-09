@@ -3,948 +3,1567 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>高端合金材料热加工与热处理工艺数据库</title>
+<title>先进合金热加工与热处理工艺数据库</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --primary:#1a73e8;--primary-dark:#1557b0;--primary-light:#e8f0fe;
-  --bg:#f8f9fa;--card:#ffffff;--text:#202124;--text2:#5f6368;
-  --border:#dadce0;--success:#0d904f;--warning:#e8a317;--danger:#d93025;
-  --titanium:#4285f4;--aluminum:#34a853;--superalloy:#ea4335;--steel:#9334e6;
-  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
-  --shadow-lg:0 10px 25px rgba(0,0,0,.1);
-}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-a{color:var(--primary);text-decoration:none}
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2d6096;
+    --accent: #e8740a;
+    --accent2: #1a8a6e;
+    --accent3: #8a1a5c;
+    --accent4: #5c1a8a;
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --border: #dce4ef;
+    --text: #1e2a38;
+    --text2: #4a5a70;
+    --text3: #7a8a9a;
+    --tag-ti: #1a7a4e;
+    --tag-al: #1a5a9a;
+    --tag-st: #7a2a1a;
+    --tag-ni: #5a1a7a;
+    --warn: #c8400a;
+    --warn-bg: #fff4ee;
+    --success: #1a7a4e;
+    --success-bg: #eefaf4;
+    --info: #1a5a9a;
+    --info-bg: #eef4ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-/* Header */
-.header{background:linear-gradient(135deg,#1a237e,#283593,#1565c0);color:#fff;padding:20px 30px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.2)}
-.header h1{font-size:22px;font-weight:700;letter-spacing:.5px}
-.header p{font-size:13px;opacity:.85;margin-top:4px}
+  /* ===== TOP HEADER ===== */
+  .top-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #0e2540 60%, #1a4060 100%);
+    color: white;
+    padding: 28px 40px 22px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .top-header h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .top-header p { color: rgba(255,255,255,0.72); font-size: 0.88rem; }
+  .header-row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .header-stats { display: flex; gap: 18px; flex-wrap: wrap; }
+  .stat-chip {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.9);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .stat-chip span { font-weight: 700; font-size: 0.95rem; color: #fff; }
 
-/* Tabs */
-.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);padding:0 20px;overflow-x:auto;position:sticky;top:68px;z-index:99}
-.tab{padding:14px 22px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
-.tab:hover{color:var(--primary);background:var(--primary-light)}
-.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+  /* ===== MAIN LAYOUT ===== */
+  .main-layout {
+    display: flex;
+    min-height: calc(100vh - 110px);
+  }
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 110px;
+    height: calc(100vh - 110px);
+    overflow-y: auto;
+  }
+  .sidebar-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 20px 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-radius: 0;
+    font-size: 0.88rem;
+    color: var(--text2);
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: var(--bg); color: var(--text); }
+  .nav-item.active { background: rgba(26,90,154,0.08); color: var(--primary-light); border-left-color: var(--primary-light); font-weight: 600; }
+  .nav-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    color: var(--text3);
+  }
 
-/* Main */
-.main{max-width:1400px;margin:0 auto;padding:20px}
+  /* ===== CONTENT AREA ===== */
+  .content-area {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
 
-/* Search & Filter Bar */
-.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;align-items:center}
-.search-box{flex:1;min-width:240px;position:relative}
-.search-box input{width:100%;padding:10px 14px 10px 40px;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;outline:none;transition:border .2s}
-.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,115,232,.15)}
-.search-box svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text2)}
-.filter-chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--text2);background:#fff;transition:all .2s}
-.chip:hover{border-color:var(--primary);color:var(--primary)}
-.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-.chip[data-cat="titanium"].active{background:var(--titanium);border-color:var(--titanium)}
-.chip[data-cat="aluminum"].active{background:var(--aluminum);border-color:var(--aluminum)}
-.chip[data-cat="superalloy"].active{background:var(--superalloy);border-color:var(--superalloy)}
-.chip[data-cat="steel"].active{background:var(--steel);border-color:var(--steel)}
+  /* ===== SEARCH & FILTER BAR ===== */
+  .search-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-input-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    background: var(--card);
+    color: var(--text);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--primary-light); }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    pointer-events: none;
+  }
+  .filter-select {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    min-width: 130px;
+  }
+  .filter-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-/* Compare Bar */
-.compare-bar{position:fixed;bottom:-80px;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:14px 30px;display:flex;align-items:center;gap:16px;z-index:100;box-shadow:0 -2px 10px rgba(0,0,0,.1);transition:bottom .3s}
-.compare-bar.show{bottom:0}
-.compare-bar .selected{display:flex;gap:8px;flex:1;flex-wrap:wrap}
-.compare-tag{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;color:#fff}
-.compare-tag .remove{cursor:pointer;opacity:.7;font-size:16px;line-height:1}
-.compare-tag .remove:hover{opacity:1}
-.btn{padding:8px 20px;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
-.btn-outline:hover{background:var(--primary-light)}
+  /* ===== CATEGORY TABS ===== */
+  .category-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .cat-tab {
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cat-tab.all { background: var(--primary); color: white; }
+  .cat-tab.titanium { background: rgba(26,122,78,0.12); color: var(--tag-ti); border-color: rgba(26,122,78,0.3); }
+  .cat-tab.titanium.active, .cat-tab.titanium:hover { background: var(--tag-ti); color: white; }
+  .cat-tab.aluminum { background: rgba(26,90,154,0.12); color: var(--tag-al); border-color: rgba(26,90,154,0.3); }
+  .cat-tab.aluminum.active, .cat-tab.aluminum:hover { background: var(--tag-al); color: white; }
+  .cat-tab.steel { background: rgba(122,42,26,0.1); color: var(--tag-st); border-color: rgba(122,42,26,0.25); }
+  .cat-tab.steel.active, .cat-tab.steel:hover { background: var(--tag-st); color: white; }
+  .cat-tab.nickel { background: rgba(90,26,122,0.1); color: var(--tag-ni); border-color: rgba(90,26,122,0.25); }
+  .cat-tab.nickel.active, .cat-tab.nickel:hover { background: var(--tag-ni); color: white; }
+  .cat-count { background: rgba(255,255,255,0.8); border-radius: 10px; padding: 1px 7px; font-size: 0.75rem; }
 
-/* Section */
-.section{display:none}
-.section.active{display:block}
-.section-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.section-title .badge{font-size:11px;padding:3px 10px;border-radius:12px;color:#fff;font-weight:600}
+  /* ===== MATERIAL CARDS ===== */
+  .materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+    gap: 20px;
+  }
+  .material-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .material-card:hover { box-shadow: 0 8px 28px rgba(26,58,92,0.12); transform: translateY(-2px); }
+  .card-header {
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title-group {}
+  .card-material-name { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .card-material-formula { font-size: 0.78rem; color: var(--text3); font-family: 'Courier New', monospace; }
+  .card-badges { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .badge-ti { background: rgba(26,122,78,0.12); color: var(--tag-ti); }
+  .badge-al { background: rgba(26,90,154,0.12); color: var(--tag-al); }
+  .badge-st { background: rgba(122,42,26,0.12); color: var(--tag-st); }
+  .badge-ni { background: rgba(90,26,122,0.12); color: var(--tag-ni); }
+  .badge-app { background: rgba(232,116,10,0.12); color: var(--accent); }
 
-/* Material Cards */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:24px}
-.mat-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:all .2s;cursor:pointer;position:relative}
-.mat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
-.mat-card-header{padding:16px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.mat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
-.mat-card-header .info{flex:1}
-.mat-card-header .info h3{font-size:15px;font-weight:700}
-.mat-card-header .info span{font-size:12px;color:var(--text2)}
-.compare-check{position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:4px;border:2px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.compare-check.checked{background:var(--primary);border-color:var(--primary)}
-.compare-check.checked::after{content:"✓";color:#fff;font-size:13px;font-weight:700}
-.mat-card-body{padding:14px 18px;font-size:13px}
-.mat-card-body .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #f0f0f0}
-.mat-card-body .row:last-child{border:none}
-.mat-card-body .label{color:var(--text2);font-size:12px}
-.mat-card-body .value{font-weight:600;font-size:12px;text-align:right;max-width:55%}
-.mat-card-footer{padding:10px 18px;background:#fafbfc;border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap}
-.mat-card-footer .tag{font-size:10px;padding:2px 8px;border-radius:4px;background:#eef;font-weight:500}
+  /* TABS within card */
+  .card-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+  }
+  .card-tab {
+    flex: 1;
+    padding: 9px 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .card-tab:hover { color: var(--text); }
+  .card-tab.active { color: var(--primary-light); border-bottom-color: var(--primary-light); background: white; }
+  .card-tab-content { display: none; padding: 16px 20px; }
+  .card-tab-content.active { display: block; }
 
-/* Detail Panel */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
-.overlay.show{opacity:1;pointer-events:auto}
-.detail-panel{position:fixed;right:-600px;top:0;bottom:0;width:580px;max-width:95vw;background:#fff;z-index:201;overflow-y:auto;transition:right .3s;box-shadow:-4px 0 20px rgba(0,0,0,.15)}
-.detail-panel.show{right:0}
-.detail-header{padding:20px 24px;position:sticky;top:0;background:#fff;z-index:5;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.detail-header .close-btn{width:32px;height:32px;border-radius:50%;border:none;background:#f1f3f4;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-.detail-header .close-btn:hover{background:#e8eaed}
-.detail-header h2{font-size:18px;flex:1}
-.detail-body{padding:20px 24px}
-.detail-section{margin-bottom:24px}
-.detail-section h4{font-size:14px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--primary-light);display:flex;align-items:center;gap:8px}
-.detail-section h4 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  /* PROCESS TABLES */
+  .process-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 10px; }
+  .process-table th {
+    background: var(--primary);
+    color: white;
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+  .process-table th:first-child { border-radius: 0; }
+  .process-table th:last-child { border-radius: 0; }
+  .process-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.45;
+    color: var(--text);
+  }
+  .process-table tr:last-child td { border-bottom: none; }
+  .process-table tr:hover td { background: rgba(26,90,154,0.04); }
+  .process-table .tr-alt { background: #f9fbfd; }
+  .temp-value { color: var(--primary-light); font-weight: 600; }
+  .cooling-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.74rem;
+    font-weight: 600;
+  }
+  .cool-water { background: #dceeff; color: #1a5a9a; }
+  .cool-air { background: #dcf4ec; color: #1a7a4e; }
+  .cool-oil { background: #fff0dc; color: #9a5a1a; }
+  .cool-furnace { background: #f0dcff; color: #5a1a9a; }
 
-/* Tables */
-.tbl-wrap{overflow-x:auto;margin:8px 0}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#f1f3f4;padding:8px 10px;text-align:left;font-weight:600;white-space:nowrap;border:1px solid var(--border)}
-td{padding:7px 10px;border:1px solid var(--border);vertical-align:top}
-tr:hover td{background:#f8f9ff}
-.highlight{background:#fff3e0!important;font-weight:600}
+  /* ISSUES SECTION */
+  .issue-item {
+    background: var(--warn-bg);
+    border: 1px solid rgba(200,64,10,0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .issue-item:last-child { margin-bottom: 0; }
+  .issue-title { font-weight: 700; color: var(--warn); font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .issue-body { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
+  .issue-cause { margin-top: 6px; }
+  .issue-solution { 
+    background: var(--success-bg);
+    border: 1px solid rgba(26,122,78,0.2);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--success);
+    line-height: 1.55;
+  }
+  .solution-label { font-weight: 700; margin-bottom: 3px; font-size: 0.8rem; }
+  
+  /* KEY PROPS */
+  .key-props { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .key-prop {
+    background: var(--info-bg);
+    border: 1px solid rgba(26,90,154,0.15);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    color: var(--info);
+  }
+  .key-prop strong { display: block; font-size: 0.72rem; color: var(--text3); margin-bottom: 2px; font-weight: 600; }
 
-/* Problem Cards */
-.problem-list{display:flex;flex-direction:column;gap:10px}
-.problem-card{padding:12px 14px;border-radius:8px;border-left:4px solid var(--danger);background:#fef7f7;font-size:12px}
-.problem-card .p-title{font-weight:700;font-size:13px;color:var(--danger);margin-bottom:4px}
-.problem-card .p-row{margin:3px 0;display:flex;gap:6px}
-.problem-card .p-label{color:var(--text2);min-width:60px;flex-shrink:0}
-.problem-card .p-val{flex:1}
-.problem-card.warn{border-left-color:var(--warning);background:#fff8e1}
-.problem-card.warn .p-title{color:var(--warning)}
+  /* DEFORMATION PARAMS */
+  .deform-zone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .deform-chip {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 120px;
+    flex: 1;
+  }
+  .deform-chip-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+  .deform-chip-value { font-weight: 600; font-size: 0.88rem; }
+  .deform-chip-note { font-size: 0.72rem; opacity: 0.8; }
+  .chip-temp { background: rgba(26,90,154,0.09); color: #1a5a9a; }
+  .chip-rate { background: rgba(26,122,78,0.09); color: #1a7a4e; }
+  .chip-deform { background: rgba(232,116,10,0.09); color: #9a5a0a; }
+  .chip-warn { background: rgba(200,64,10,0.09); color: var(--warn); }
 
-/* Compare View */
-.compare-section{margin-top:20px}
-.compare-table{width:100%;border-collapse:collapse;font-size:12px}
-.compare-table th,.compare-table td{padding:8px 12px;border:1px solid var(--border);vertical-align:top;text-align:center}
-.compare-table thead th{background:#f1f3f4;font-weight:700;position:sticky;top:0}
-.compare-table tbody th{text-align:left;background:#fafbfc;font-weight:600;white-space:nowrap}
+  /* SECTION TITLE in content */
+  .section-h { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; margin-top: 14px; }
+  .section-h:first-child { margin-top: 0; }
 
-/* Back to top */
-.back-top{position:fixed;right:24px;bottom:80px;width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);z-index:50}
-.back-top.show{display:flex}
+  /* ===== COMPARE PANEL ===== */
+  #compare-section {
+    display: none;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .compare-card {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    padding: 16px;
+  }
+  .compare-title { font-weight: 700; font-size: 1rem; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .compare-row { display: flex; align-items: baseline; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--border); font-size: 0.82rem; }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-key { color: var(--text3); }
+  .compare-val { color: var(--text); font-weight: 600; max-width: 55%; text-align: right; }
 
-/* Responsive */
-@media(max-width:768px){
-  .header h1{font-size:17px}
-  .tabs{padding:0 10px}
-  .tab{padding:10px 14px;font-size:13px}
-  .main{padding:12px}
-  .cards-grid{grid-template-columns:1fr}
-  .detail-panel{width:100%}
-  .toolbar{flex-direction:column}
-}
+  /* ===== DETAIL MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,28,50,0.55);
+    z-index: 200;
+    backdrop-filter: blur(3px);
+  }
+  .modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+  .modal-box {
+    background: var(--card);
+    border-radius: 14px;
+    width: min(900px, 95vw);
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  }
+  .modal-header {
+    background: var(--primary);
+    color: white;
+    padding: 20px 28px;
+    border-radius: 14px 14px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .modal-title { font-size: 1.3rem; font-weight: 700; }
+  .modal-subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-top: 4px; }
+  .modal-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .modal-close:hover { background: rgba(255,255,255,0.28); }
+  .modal-body { padding: 24px 28px; }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section-title { font-size: 1rem; font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 14px; }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .content-area { padding: 16px; }
+    .materials-grid { grid-template-columns: 1fr; }
+    .top-header { padding: 16px 20px; }
+    .top-header h1 { font-size: 1.2rem; }
+  }
+
+  /* ===== SCROLL FADE ===== */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* jump key */
+  .material-card[data-id] { scroll-margin-top: 120px; }
+
+  /* highlight search */
+  .search-highlight { background: #fff3c4; border-radius: 2px; }
+
+  /* expand/collapse */
+  .expand-toggle { background: none; border: none; color: var(--primary-light); font-size: 0.8rem; cursor: pointer; padding: 4px 0; font-weight: 600; }
+  .expand-toggle:hover { text-decoration: underline; }
+  .expandable-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .expandable-content.expanded { max-height: 2000px; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🔬 高端合金材料热加工与热处理工艺数据库</h1>
-  <p>钛合金 · 铝合金 · 高温合金 · 超高强度钢 — 交互式工艺参数查询与对比平台</p>
-</div>
-
-<div class="tabs" id="tabs">
-  <div class="tab active" data-tab="overview">🏠 总览</div>
-  <div class="tab" data-tab="heatreatment">🔥 热处理工艺</div>
-  <div class="tab" data-tab="hotdeform">⚙️ 热变形工艺</div>
-  <div class="tab" data-tab="problems">⚠️ 常见问题</div>
-  <div class="tab" data-tab="compare">📊 参数对比</div>
-</div>
-
-<div class="main">
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="搜索材料牌号、成分、工艺参数...">
+<!-- TOP HEADER -->
+<div class="top-header">
+  <div class="header-row">
+    <div>
+      <h1>🔬 先进合金热加工与热处理工艺数据库</h1>
+      <p>钛合金 · 铝合金 · 超高强度钢 · 高温合金 ｜ 工艺参数 · 组织演变 · 常见缺陷与解决方案</p>
     </div>
-    <div class="filter-chips" id="filterChips">
-      <div class="chip active" data-cat="all">全部</div>
-      <div class="chip" data-cat="titanium">🟦 钛合金</div>
-      <div class="chip" data-cat="aluminum">🟩 铝合金</div>
-      <div class="chip" data-cat="superalloy">🟥 高温合金</div>
-      <div class="chip" data-cat="steel">🟪 超高强度钢</div>
+    <div class="header-stats">
+      <div class="stat-chip">合金种类 <span>15+</span></div>
+      <div class="stat-chip">工艺条目 <span>200+</span></div>
+      <div class="stat-chip">问题解决方案 <span>50+</span></div>
     </div>
   </div>
+</div>
 
-  <!-- Overview Section -->
-  <div class="section active" id="sec-overview">
-    <div class="section-title">材料总览<span class="badge" style="background:var(--primary)" id="totalCount">0 种材料</span></div>
-    <div class="cards-grid" id="overviewCards"></div>
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section-title">分类导航</div>
+    <div class="nav-item active" onclick="filterCategory('all')">
+      <span class="nav-dot" style="background:#64748b"></span> 全部材料
+      <span class="nav-badge">15</span>
+    </div>
+    <div class="sidebar-section-title">钛合金</div>
+    <div class="nav-item" onclick="jumpTo('TC4')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TC4 (Ti-6Al-4V)</div>
+    <div class="nav-item" onclick="jumpTo('TC17')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TC17</div>
+    <div class="nav-item" onclick="jumpTo('TC18')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TC18</div>
+    <div class="nav-item" onclick="jumpTo('TC21')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TC21</div>
+    <div class="nav-item" onclick="jumpTo('TC25')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TC25</div>
+    <div class="nav-item" onclick="jumpTo('TA15')"><span class="nav-dot" style="background:var(--tag-ti)"></span>TA15</div>
+    <div class="sidebar-section-title">铝合金</div>
+    <div class="nav-item" onclick="jumpTo('2024')"><span class="nav-dot" style="background:var(--tag-al)"></span>2024 铝合金</div>
+    <div class="nav-item" onclick="jumpTo('7075')"><span class="nav-dot" style="background:var(--tag-al)"></span>7075 铝合金</div>
+    <div class="nav-item" onclick="jumpTo('7050')"><span class="nav-dot" style="background:var(--tag-al)"></span>7050 铝合金</div>
+    <div class="nav-item" onclick="jumpTo('2219')"><span class="nav-dot" style="background:var(--tag-al)"></span>2219 铝合金</div>
+    <div class="sidebar-section-title">超高强度钢</div>
+    <div class="nav-item" onclick="jumpTo('A100')"><span class="nav-dot" style="background:var(--tag-st)"></span>A-100 (AerMet100)</div>
+    <div class="nav-item" onclick="jumpTo('300M')"><span class="nav-dot" style="background:var(--tag-st)"></span>300M</div>
+    <div class="sidebar-section-title">高温合金</div>
+    <div class="nav-item" onclick="jumpTo('GH4169')"><span class="nav-dot" style="background:var(--tag-ni)"></span>GH4169 (IN718)</div>
+    <div class="nav-item" onclick="jumpTo('GH4698')"><span class="nav-dot" style="background:var(--tag-ni)"></span>GH4698</div>
   </div>
 
-  <!-- Heat Treatment Section -->
-  <div class="section" id="sec-heatreatment">
-    <div class="section-title">🔥 热处理工艺参数<span class="badge" style="background:#e8a317">温度 / 时间 / 冷却</span></div>
-    <div class="cards-grid" id="htCards"></div>
-  </div>
+  <!-- CONTENT AREA -->
+  <div class="content-area" id="main-content">
+    <!-- SEARCH BAR -->
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索材料名称、工艺参数、温度范围..." oninput="doSearch(this.value)">
+      </div>
+      <select class="filter-select" id="typeFilter" onchange="filterByType(this.value)">
+        <option value="all">全部工序</option>
+        <option value="热处理">热处理</option>
+        <option value="热变形">热变形</option>
+      </select>
+    </div>
 
-  <!-- Hot Deformation Section -->
-  <div class="section" id="sec-hotdeform">
-    <div class="section-title">⚙️ 热变形工艺参数<span class="badge" style="background:#0d904f">温度 / 应变速率 / 变形量</span></div>
-    <div class="cards-grid" id="hdCards"></div>
-  </div>
+    <!-- CATEGORY TABS -->
+    <div class="category-tabs">
+      <div class="cat-tab all active" onclick="filterCategory('all')">全部 <span class="cat-count">15</span></div>
+      <div class="cat-tab titanium" onclick="filterCategory('titanium')">钛合金 <span class="cat-count">6</span></div>
+      <div class="cat-tab aluminum" onclick="filterCategory('aluminum')">铝合金 <span class="cat-count">5</span></div>
+      <div class="cat-tab steel" onclick="filterCategory('steel')">超高强度钢 <span class="cat-count">2</span></div>
+      <div class="cat-tab nickel" onclick="filterCategory('nickel')">高温合金 <span class="cat-count">2</span></div>
+    </div>
 
-  <!-- Problems Section -->
-  <div class="section" id="sec-problems">
-    <div class="section-title">⚠️ 常见问题与防治<span class="badge" style="background:#d93025">风险预警</span></div>
-    <div class="cards-grid" id="probCards"></div>
-  </div>
-
-  <!-- Compare Section -->
-  <div class="section" id="sec-compare">
-    <div class="section-title">📊 材料参数对比<span class="badge" style="background:var(--primary)">选择2-4种材料</span></div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">在总览页面勾选材料后，点击底部"开始对比"按钮查看参数对比。</p>
-    <div id="compareContent"></div>
+    <!-- MATERIALS GRID -->
+    <div class="materials-grid" id="materialsGrid">
+      <!-- Cards will be injected by JS -->
+    </div>
   </div>
 </div>
 
-<!-- Overlay & Detail Panel -->
-<div class="overlay" id="overlay"></div>
-<div class="detail-panel" id="detailPanel">
-  <div class="detail-header">
-    <button class="close-btn" id="closeDetail">✕</button>
-    <h2 id="detailTitle">材料详情</h2>
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">材料详情</div>
+        <div class="modal-subtitle" id="modalSubtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
-  <div class="detail-body" id="detailBody"></div>
 </div>
-
-<!-- Compare Bar -->
-<div class="compare-bar" id="compareBar">
-  <span style="font-size:13px;font-weight:600">对比选择:</span>
-  <div class="selected" id="compareSelected"></div>
-  <button class="btn btn-outline" id="clearCompare">清空</button>
-  <button class="btn btn-primary" id="startCompare">开始对比</button>
-</div>
-
-<!-- Back to Top -->
-<button class="back-top" id="backTop">↑</button>
 
 <script>
-// =================== DATA ===================
-const DB = [
-// ---- TITANIUM ALLOYS ----
-{
-  id:"TA15",name:"TA15",fullName:"TA15 (BT20)",category:"titanium",catName:"钛合金",
-  composition:"Ti-6Al-2Zr-1Mo-1V",type:"近α型钛合金（高铝当量）",
-  betaTransus:"980~993℃",density:"~4.45 g/cm³",
-  iconColor:"#4285f4",
-  tags:["航空航天","承力结构件","近α型"],
-  heatTreatment:[
-    {process:"去应力退火",temp:"600~650℃",time:"0.5~8h",cooling:"空冷/缓冷至300℃",notes:"消除焊接或冷加工残余应力70%~90%"},
-    {process:"普通退火",temp:"750~850℃",time:"厚板1~2h;薄板15~60min",cooling:"空冷",notes:"改善组织均匀性，调控强度与塑性匹配"},
-    {process:"双重退火",temp:"920~980℃(一阶)+600~850℃(二阶)",time:"1~2h+2~8h",cooling:"水淬/空冷+空冷",notes:"强韧化处理，获得三态组织"},
-    {process:"固溶+时效",temp:"920~940℃(固溶)+550~650℃(时效)",time:"1h+4~6h",cooling:"空冷/水淬+空冷",notes:"固溶强化，最优抗拉强度较退火态提高25%以上"},
-    {process:"β退火",temp:">1020℃",time:"1~2h",cooling:"空冷/炉冷",notes:"获得片状魏氏组织，塑性恶化，一般不推荐"},
-  ],
-  hotDeformation:{
-    tempRange:"750~980℃",optimalTemp:"875~980℃",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~0.10 s⁻¹",
-    forgingTemp:"965~970℃(近β锻造)",finishForgeTemp:"≥800℃",
-    maxDeform:"40%~65%",activationEnergy:"523~746 kJ/mol",
-    notes:"最优加工区间: 885~950℃ / 0.001~0.1 s⁻¹，η最高达0.46"
+// ===================================================================
+// DATA — 所有材料工艺数据
+// ===================================================================
+const MATERIALS = [
+  // ============================
+  // TC4 (Ti-6Al-4V)
+  // ============================
+  {
+    id: 'TC4', name: 'TC4', category: 'titanium',
+    formula: 'Ti-6Al-4V',
+    betaTemp: '980-990℃',
+    desc: 'α+β型钛合金，应用最广泛，综合性能优异',
+    application: '航空发动机叶片、医疗植入物、紧固件、结构件',
+    keyProps: [
+      { label: '退火态抗拉强度', value: '≥896 MPa' },
+      { label: '屈服强度', value: '≥825 MPa' },
+      { label: '延伸率', value: '≥10%' },
+      { label: '超塑延伸率', value: '最高1270%' },
+      { label: '工作温度', value: '≤500℃' },
+    ],
+    heatTreatment: [
+      { process: '去应力退火', temp: '500-650℃', time: '0.5-4h', cooling: 'air', note: '消除加工应力' },
+      { process: '再结晶退火', temp: '700-800℃', time: '1-2h', cooling: 'air', note: '等轴组织，提高塑性' },
+      { process: '双重退火', temp: '900℃+700℃', time: '1h+1h', cooling: 'air', note: '双态组织，平衡强韧性' },
+      { process: '固溶处理', temp: '910-950℃', time: '0.5-2h', cooling: 'water/oil', note: '低于β相变点30-60℃' },
+      { process: '时效处理', temp: '480-560℃', time: '2-8h', cooling: 'air', note: '弥散强化，消除α\'相' },
+      { process: 'HIP处理', temp: '880-950℃', time: '2-4h', cooling: 'furnace', note: '压力100-160MPa，消除孔隙' },
+    ],
+    deformation: {
+      process: '热压缩/热锻/热轧',
+      zones: [
+        { label: '安全加工温度', value: '850-1000℃', note: '最佳窗口', type: 'temp' },
+        { label: '应变速率', value: '0.001-10 s⁻¹', note: '推荐0.01-1 s⁻¹', type: 'rate' },
+        { label: '超塑成形温度', value: '820-850℃', note: '应变速率0.0002 s⁻¹', type: 'temp' },
+        { label: '热锻变形量', value: '60-80%', note: '2-4火次', type: 'deform' },
+        { label: '失稳区域', value: '≥1.3 s⁻¹', note: '低温下避免', type: 'warn' },
+      ],
+      detail: '稳定域A：650-740℃/0.01-0.07 s⁻¹；稳定域B：760-850℃/0.04-1 s⁻¹；失稳域C：650-850℃/≥1.3 s⁻¹；热轧温度800-950℃，单道次压下率≤30%；超塑温度850℃，应变速率1×10⁻³ s⁻¹时延伸率901%'
+    },
+    issues: [
+      {
+        title: '魏氏组织形成',
+        cause: '固溶温度过高（>980℃）或HIP温度过高（>950℃），导致β相晶粒粗大，α相沿β晶界形核并生长',
+        solution: '固溶温度严格控制在910-940℃；HIP温度≤950℃，压力≤150MPa；换向轧制弱化织构'
+      },
+      {
+        title: '亚稳态α\'马氏体过量',
+        cause: '增材制造或固溶处理后冷却速率过快（如水淬厚截面），导致α\'相过量保留，硬度高、塑性差',
+        solution: '时效处理500-650℃保温2-6h；双重退火900℃+700℃；厚截面材料采用炉冷（5℃/min）替代水淬'
+      },
+      {
+        title: '氢脆',
+        cause: '高温加工或焊接过程中吸收过量氢原子，在局部区域形成氢化物，导致脆性断裂',
+        solution: '真空退火700-800℃/0.5-2h，炉内绝对压强≤0.09Pa；控制原材料氢含量≤0.015%；HIP后随炉冷至300℃以下'
+      },
+      {
+        title: '热加工开裂',
+        cause: '温度过低（<850℃）导致塑性差，或应变速率过高（>10 s⁻¹）抑制软化机制',
+        solution: '保持在850-1000℃安全加工窗口；选择合适应变速率，900℃时用0.01-0.1 s⁻¹；使用玻璃润滑剂，降低摩擦系数至0.04-0.06'
+      },
+      {
+        title: '粘模与表面氧化',
+        cause: '高温下钛合金与模具直接接触，摩擦系数高（>0.08）；高温下与空气接触，形成TiO₂氧化层',
+        solution: '使用黑磷烯基润滑剂或玻璃润滑剂，摩擦系数降至0.04-0.06；采用氩气或真空保护；热处理后喷砂去除氧化层'
+      },
+    ]
   },
-  problems:[
-    {title:"β脆性（过热）",severity:"danger",cause:"锻造或热处理加热温度超过β转变温度(980~993℃)",effect:"室温塑性显著降低，形成魏氏组织",solution:"严格控制炉温;检测各炉号实际β转变温度;不能通过热处理修复"},
-    {title:"局部粗晶",severity:"warn",cause:"钛合金导热性差，坯料表层与模具接触温度降低多，变形不充分",effect:"组织不均匀，力学性能分散性大",solution:"采用预锻工序;加强润滑;充分预热模具"},
-    {title:"锻造裂纹",severity:"danger",cause:"终锻温度低于充分再结晶温度(<800℃)",effect:"锻件表面出现裂纹",solution:"采用玻璃润滑剂;缩短坯料同下模接触时间;保证终锻温度"},
-    {title:"氢脆",severity:"danger",cause:"钛合金中氢含量超标(>0.02%)",effect:"塑性和韧性显著降低;可能导致延迟断裂",solution:"锻造或热处理时保持略带氧化性气氛;对超标零件进行真空退火"},
-    {title:"α脆化层（氧氮污染）",severity:"warn",cause:"高温时氧和氮向金属内部扩散",effect:"脆化层过厚时锻造可导致坯料开裂",solution:"控制加热温度和保温时间;采用纯度>99.999%氩气保护"},
-    {title:"残留铸造组织",severity:"warn",cause:"锻造比不够大或锻造方法不当",effect:"力学性能达不到标准",solution:"增大锻造比;采用反复镦拔"},
-    {title:"变形不均匀",severity:"warn",cause:"TA15合金粘性大、流动性差、导热性不好",effect:"产生剪切带甚至绝热剪切带",solution:"优化润滑条件;控制应变速率;采用合理变形温度"},
-  ]
-},
-{
-  id:"TC4",name:"TC4",fullName:"TC4 (Ti-6Al-4V)",category:"titanium",catName:"钛合金",
-  composition:"Ti-6Al-4V",type:"α+β型钛合金",
-  betaTransus:"980~990℃",density:"4.43 g/cm³",
-  iconColor:"#4285f4",
-  tags:["航空航天","医疗植入","应用最广"],
-  heatTreatment:[
-    {process:"去应力退火",temp:"500~650℃",time:"0.5~4h",cooling:"空冷",notes:"消除加工应力"},
-    {process:"再结晶退火",temp:"700~800℃",time:"0.5~2h",cooling:"空冷或炉冷",notes:"再结晶温度750℃"},
-    {process:"双重退火",temp:"900℃+700℃",time:"1h+1h",cooling:"空冷",notes:"航空部件优选，获得双态组织"},
-    {process:"固溶处理",temp:"910~950℃",time:"0.5~2h",cooling:"水淬或油淬",notes:"形成亚稳态α'马氏体组织，提高强度15-20%"},
-    {process:"时效处理",temp:"480~560℃",time:"2~8h",cooling:"空冷",notes:"α'相分解为α+β相，弥散强化"},
-    {process:"热等静压(HIP)",temp:"800~950℃",time:"2~4h",cooling:"随炉冷至300℃以下",notes:"压力100-160MPa，消除内部孔隙，致密度>99%"},
-  ],
-  hotDeformation:{
-    tempRange:"700~1050℃",optimalTemp:"850~950℃",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~0.1 s⁻¹",
-    forgingTemp:"840~960℃",finishForgeTemp:"≥800℃",
-    maxDeform:"60~80%",activationEnergy:"—",
-    notes:"安全加工窗口850~1000℃;超塑性820~850℃/0.0002~0.0005 s⁻¹延伸率>900%"
-  },
-  problems:[
-    {title:"魏氏组织形成",severity:"danger",cause:"固溶温度过高(>980℃)或HIP温度过高(>950℃)",effect:"晶粒粗大，断裂韧性下降30%",solution:"固溶温度控制在β相变点以下30-60℃;HIP温度≤950℃"},
-    {title:"氢脆现象",severity:"danger",cause:"高温加工或焊接过程中吸收过量氢",effect:"脆性断裂，延伸率显著降低",solution:"真空退火700-800℃/0.5-2h;控制氢含量≤0.015%"},
-    {title:"热加工开裂",severity:"danger",cause:"温度过低(<850℃)或应变速率过高(>10 s⁻¹)",effect:"表面或内部产生裂纹",solution:"保持850-1000℃安全窗口;使用玻璃润滑剂"},
-    {title:"织构与各向异性",severity:"warn",cause:"单向热变形导致α相沿特定方向择优生长",effect:"疲劳寿命降低，抗应力腐蚀性能下降",solution:"换向轧制;多火次锻造;HIP后处理弱化织构"},
-    {title:"粘模现象",severity:"warn",cause:"高温(>950℃)下钛合金与模具直接接触",effect:"表面粗糙度增加，模具寿命降低",solution:"使用黑磷烯或玻璃润滑剂(摩擦系数0.04-0.06);模具预热250-350℃"},
-    {title:"表面氧化",severity:"warn",cause:"高温下钛合金与空气接触形成TiO₂氧化层",effect:"表面硬度高脆性大，疲劳寿命降低",solution:"采用氩气或真空保护;热加工后喷砂去除氧化层"},
-  ]
-},
-{
-  id:"TC17",name:"TC17",fullName:"TC17 (Ti-5Al-2Sn-2Zr-4Mo-4Cr)",category:"titanium",catName:"钛合金",
-  composition:"Ti-5Al-2Sn-2Zr-4Mo-4Cr",type:"α+β型两相钛合金",
-  betaTransus:"—",density:"~4.65 g/cm³",
-  iconColor:"#4285f4",
-  tags:["发动机压气机盘","风扇叶片","高淬透性"],
-  heatTreatment:[
-    {process:"固溶处理(β锻造)",temp:"800℃±10℃",time:"4h",cooling:"水淬",notes:"初生α相含量约60%，屈服强度1136MPa"},
-    {process:"固溶处理(α+β锻造)",temp:"840℃±10℃",time:"1h",cooling:"空冷",notes:"细小α相和β相组织，屈服强度1106MPa"},
-    {process:"时效处理",temp:"630℃",time:"8h",cooling:"空冷",notes:"抗拉强度可达1154MPa，延伸率12%"},
-    {process:"去应力退火",temp:"≤630℃",time:"1~4h",cooling:"空冷",notes:"消除加工内应力"},
-    {process:"双重退火",temp:"600℃+550℃",time:"4h+4h",cooling:"空冷",notes:"改善修复件不同区域组织均匀性"},
-  ],
-  hotDeformation:{
-    tempRange:"600~950℃",optimalTemp:"800~850℃(两相区);900~950℃(β区)",
-    strainRateRange:"10⁻³~10⁻² s⁻¹(最优)",optimalStrainRate:"0.001~0.01 s⁻¹",
-    forgingTemp:"750~850℃(α+β区);900~950℃(β区)",finishForgeTemp:"—",
-    maxDeform:"≥60%",activationEnergy:"—",
-    notes:"600-850℃应变软化特征;850-950℃稳态流动特征;置氢量≤0.2wt.%时流动应力最小"
-  },
-  problems:[
-    {title:"氢脆与氢化物致脆",severity:"danger",cause:"氢原子在裂纹尖端富集;H:Ti>48:108时诱导α-Ti-H向δ/ε氢化物转变",effect:"延展性显著降低，甚至脆性断裂",solution:"控制置氢量≤0.2wt.%;去氢退火600℃×4h/AC;避免高氢环境"},
-    {title:"热变形开裂",severity:"danger",cause:"高温段应变速率过高或低温段变形量过小",effect:"表面或内部裂纹",solution:"高温段应变速率≤10⁻²s⁻¹;低温段提高变形温度;空冷或炉冷"},
-    {title:"组织不均匀性",severity:"warn",cause:"增材制造中快速熔化、快速冷凝",effect:"非平衡亚稳态组织",solution:"双重退火600℃×4h/AC+550℃×4h/AC;局部热处理"},
-    {title:"各向异性开裂",severity:"warn",cause:"锻造或增材制造中形成的纤维/层状组织",effect:"轴向与径向性能差异大",solution:"多向锻造;β退火;HIP处理(孔隙率0.08%→0.01%)"},
-  ]
-},
-{
-  id:"TC18",name:"TC18",fullName:"TC18 (Ti-5Al-5Mo-5V-1Cr-1Fe)",category:"titanium",catName:"钛合金",
-  composition:"Ti-5.16Al-4.92Mo-4.96V-1.10Cr-0.98Fe",type:"近β型高强韧钛合金",
-  betaTransus:"875±5℃",density:"~4.62 g/cm³",
-  iconColor:"#4285f4",
-  tags:["航空","航天","高强韧"],
-  heatTreatment:[
-    {process:"双重退火",temp:"820~860℃(一阶)+740~760℃(二阶)",time:"2h+2h",cooling:"炉冷至二阶温+空冷",notes:"最常用工艺，Vαp=0.83t₂+32.2"},
-    {process:"时效处理",temp:"500~650℃",time:"2~6h",cooling:"空冷",notes:"低温时效强度最高(1467MPa);中温时效(585℃)塑性优"},
-    {process:"固溶处理",temp:"980~1020℃",time:"1~3h",cooling:"水淬/空冷",notes:"水淬形成马氏体结构，提高强度和韧性"},
-    {process:"β稳定化处理",temp:"810~845℃(Tβ-30~60℃)",time:"1~3h",cooling:"炉冷或空冷",notes:"控制β晶粒尺寸297~857μm，遵循Hall-Petch关系"},
-  ],
-  hotDeformation:{
-    tempRange:"700~950℃",optimalTemp:"840℃(等温模锻终锻)",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~0.1 s⁻¹",
-    forgingTemp:"840℃(终锻)",finishForgeTemp:"≥800℃",
-    maxDeform:"70~80%",activationEnergy:"—",
-    notes:"700-730℃/0.05-0.1s⁻¹为不稳定性区域，应严格避免"
-  },
-  problems:[
-    {title:"热轧裂纹",severity:"danger",cause:"临界损伤值超过0.68;高温下晶界弱化",effect:"裂纹产生",solution:"控制变形温度≥800℃;限制损伤值≤0.68"},
-    {title:"氢脆与氢致开裂",severity:"danger",cause:"氢含量>0.015%;高温吸氢或腐蚀环境",effect:"氢化物析出，阻碍位错运动",solution:"严格控氢≤0.015%;表面阳极氧化保护;脱氢处理250-350℃真空退火"},
-    {title:"α脆化层",severity:"warn",cause:"高温长时间加热(>980℃)氧/氮扩散",effect:"表层α相过量析出形成脆性层",solution:"固溶温度≤980℃;微氧化性气氛或真空环境"},
-    {title:"织构各向异性",severity:"warn",cause:"强β∥FD织构",effect:"横向塑性显著降低",solution:"高温低速变形促进动态再结晶;多道次锻造;等温模锻"},
-  ]
-},
-{
-  id:"TC21",name:"TC21",fullName:"TC21 (Ti-6Al-2Sn-2Zr-3Mo-1Cr-2Nb-0.1Si)",category:"titanium",catName:"钛合金",
-  composition:"Ti-6Al-2Sn-2Zr-3Mo-1Cr-2Nb-0.1Si",type:"损伤容限型α+β两相钛合金",
-  betaTransus:"970±5℃",density:"~4.60 g/cm³",
-  iconColor:"#4285f4",
-  tags:["歼-20","C919","损伤容限"],
-  heatTreatment:[
-    {process:"均匀化处理",temp:"1000℃",time:"20~30min",cooling:"空冷",notes:"消除偏析和成分不均匀"},
-    {process:"一级退火",temp:"900~910℃",time:"按厚度×0.5min/mm+1~2h",cooling:"空冷/风冷",notes:"消除残余应力，改善组织均匀性"},
-    {process:"二级退火",temp:"560~580℃",time:"1~4h",cooling:"空冷",notes:"促进α相析出和球化"},
-    {process:"固溶时效",temp:"900~940℃(固溶)+500~600℃(时效)",time:"1~2h+2~4h",cooling:"空冷+空冷",notes:"抗拉强度可达1350MPa"},
-    {process:"焊后退火",temp:"570℃",time:"1h",cooling:"—",notes:"使焊缝区析出细小α相，恢复损伤容限组织"},
-  ],
-  hotDeformation:{
-    tempRange:"720~990℃",optimalTemp:"890~990℃(高温区)",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~0.1 s⁻¹(中温区)",
-    forgingTemp:"900~1000℃",finishForgeTemp:"≥800℃",
-    maxDeform:"—",activationEnergy:"—",
-    notes:"低温区720-760℃/0.01-0.032s⁻¹;高温区890-990℃/0.001-10s⁻¹"
-  },
-  problems:[
-    {title:"α相分布不均",severity:"warn",cause:"冷却速率控制不当",effect:"降低强度和损伤容限性能",solution:"均匀化热处理;精确控制冷却速率"},
-    {title:"过时效/欠时效",severity:"warn",cause:"时效温度或时间控制不当",effect:"过时效塑性降;欠时效强度不足",solution:"控制时效温度550-590℃;保温2-4h"},
-    {title:"表面氧化裂纹",severity:"danger",cause:"高温锻造(>950℃)与空气接触",effect:"表面通身开裂",solution:"控制锻造温度<970℃;保护气氛(氩气)"},
-    {title:"焊缝脆化裂纹",severity:"danger",cause:"焊接快速冷却形成针状马氏体α'相",effect:"韧性降低",solution:"焊后热处理570℃/1h"},
-  ]
-},
-{
-  id:"TC25",name:"TC25",fullName:"TC25 (BT25 / Ti-6.5Al-2Sn-4Zr-4Mo-1W-0.2Si)",category:"titanium",catName:"钛合金",
-  composition:"Ti-6.5Al-2Sn-4Zr-4Mo-1W-0.2Si",type:"α+β型马氏体热强钛合金",
-  betaTransus:"1029±5℃",density:"~4.60 g/cm³",
-  iconColor:"#4285f4",
-  tags:["航空发动机","压气机盘","高温钛合金"],
-  heatTreatment:[
-    {process:"一次退火",temp:"β相变点以下30~40℃(989~1000℃)",time:"1~4h(按1h/25mm)",cooling:"网篮:空冷;双态:风冷",notes:"α相含量控制15%~25%"},
-    {process:"二次退火",temp:"540~560℃",time:"6h",cooling:"空冷",notes:"超600℃塑性显著下降"},
-    {process:"固溶时效(STA)",temp:"969~989℃(固溶)+550~590℃(时效)",time:"1~3h+6~8h",cooling:"空冷+空冷",notes:"可获得更高强度"},
-    {process:"热等静压(HIP)",temp:"1000~1100℃",time:"6~8h",cooling:"随炉冷至20~30℃",notes:"压力160-180MPa，密度达99.5%~99.95%"},
-  ],
-  hotDeformation:{
-    tempRange:"950~1100℃",optimalTemp:"950~1000℃(中温区综合性能最佳)",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.001~0.25 s⁻¹",
-    forgingTemp:"1039~1069℃(β锻造);1014~1029℃(上两相区)",finishForgeTemp:"≥950℃",
-    maxDeform:"40~80%",activationEnergy:"—",
-    notes:"等温模锻应变速率0.0001~0.01s⁻¹;变形力降至常规1/5~1/10"
-  },
-  problems:[
-    {title:"β斑(Beta Fleck)",severity:"danger",cause:"局部富钼区成分偏析(铸锭头尾)",effect:"α相分布不均，β基体粗化",solution:"三次VAR熔炼;β相变点以上150-250℃开坯;多级退火"},
-    {title:"ω相脆性",severity:"danger",cause:"特定工艺条件下形成脆性ω相",effect:"韧性急剧下降",solution:"TC25G降低铝增钼锆;冷却速率≤150℃/s;时效550-580℃"},
-    {title:"α脆性层开裂",severity:"warn",cause:"高温下氧和氮扩散",effect:"表面脆性层导致坯料开裂",solution:"预氧化处理;玻璃珐琅涂层;炉气略带氧化性气氛"},
-    {title:"热暴露脆化",severity:"warn",cause:"长期高温暴露后α₂相弥散分布+硅化物析出",effect:"强度下降和塑性降低",solution:"双固溶+时效(950℃/3h+580℃/6h);热暴露≤100h"},
-  ]
-},
 
-// ---- ALUMINUM ALLOYS ----
-{
-  id:"2024",name:"2024",fullName:"2024 (2A12)",category:"aluminum",catName:"铝合金",
-  composition:"Al-Cu-Mg系",type:"2系航空最常用铝合金",
-  betaTransus:"—",density:"2.78 g/cm³",
-  iconColor:"#34a853",
-  tags:["航空","超硬铝","2系"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"493±3℃(最优498℃)",time:"板材20~40min;厚板≤2h",cooling:"室温水淬(20~35℃)",notes:"温度窗口极窄，超出10-15℃即可能晶界熔化;转移延迟≤2-5s"},
-    {process:"T3时效",temp:"室温",time:"≥96h",cooling:"自然冷却",notes:"固溶+冷加工+自然时效，~290MPa"},
-    {process:"T6时效",temp:"190℃(185~195℃)",time:"8~12h",cooling:"空冷",notes:"峰值人工时效，~395MPa"},
-    {process:"T8时效",temp:"190℃",time:"8~12h",cooling:"空冷",notes:"固溶+冷加工(5-8%)+人工时效，~415MPa"},
-    {process:"分级时效",temp:"120℃+175℃",time:"2h+8h",cooling:"空冷",notes:"预时效形成GP区，终时效获得均匀θ'相"},
-  ],
-  hotDeformation:{
-    tempRange:"300~500℃",optimalTemp:"380~450℃",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~1 s⁻¹",
-    forgingTemp:"430~470℃",finishForgeTemp:"≥300℃",
-    maxDeform:"50~60%",activationEnergy:"—",
-    notes:"最优热加工窗口400-450℃/0.01-0.1s⁻¹;淬火延迟≤5s"
+  // ============================
+  // TC17
+  // ============================
+  {
+    id: 'TC17', name: 'TC17', category: 'titanium',
+    formula: 'Ti-5Al-2Sn-2Zr-4Mo-4Cr',
+    betaTemp: '约890℃',
+    desc: 'α+β型钛合金，高淬透性，宽锻造窗口',
+    application: '航空发动机压气机盘、风扇叶片、海洋工程部件',
+    keyProps: [
+      { label: '室温抗拉强度', value: '1154 MPa' },
+      { label: '延伸率', value: '12%' },
+      { label: '断裂韧性 KIC', value: '70 MPa·m¹/²' },
+      { label: '淬透直径', value: '≥150mm' },
+    ],
+    heatTreatment: [
+      { process: '最佳固溶处理（β锻）', temp: '800℃±10℃', time: '4h', cooling: 'water', note: '初生α相含量约60%' },
+      { process: '固溶处理（α+β锻）', temp: '840℃±10℃', time: '1h', cooling: 'air', note: '屈服强度1106MPa' },
+      { process: '时效处理', temp: '630℃', time: '8h', cooling: 'air', note: '最优强塑性，抗拉强度1154MPa' },
+      { process: '去应力退火', temp: '≤630℃', time: '1-4h', cooling: 'air', note: '消除加工内应力' },
+      { process: '完全退火', temp: '800-850℃', time: '1h', cooling: 'furnace', note: '层片状α相，断裂韧性≥70MPa·m¹/²' },
+      { process: 'β退火', temp: 'tβ+20-50℃', time: '10-30min', cooling: 'air', note: '层片组织，提高断裂韧性' },
+    ],
+    deformation: {
+      process: '热压缩/锻造',
+      zones: [
+        { label: '低温区（α+β）', value: '600-850℃', note: '应变软化特征', type: 'temp' },
+        { label: '高温区（β）', value: '850-950℃', note: '稳态流动特征', type: 'temp' },
+        { label: '最优应变速率', value: '10⁻³-10⁻² s⁻¹', note: '兼顾强度与均匀性', type: 'rate' },
+      ],
+      detail: '低温段（600-850℃）：呈应变软化特征；高温段（850-950℃）：呈稳态流动特征；推荐应变速率10⁻³-10⁻² s⁻¹；置氢处理：0.2wt.%以下流动应力最小，可扩大热加工窗口'
+    },
+    issues: [
+      {
+        title: '氢脆（深海/高应力环境）',
+        cause: '氢原子在裂纹尖端富集，表面能下降，诱发解理断裂；当H:Ti>48:108时，诱导α-Ti-H固溶体向δ/ε氢化物转变（BCC→FCC）',
+        solution: '置氢量控制在0.2wt.%以下；去氢退火处理600℃×4h/AC；采用840℃×1h/AC+800℃×4h/WQ+630℃×8h/AC固溶时效处理；严格控制酸洗等工艺的pH值'
+      },
+      {
+        title: '热变形开裂',
+        cause: '高温段应变速率过高导致动态再结晶不充分；低温段变形量过小无法破碎晶界α相；氢与应力协同作用',
+        solution: '高温段选择中低应变速率；低温段避免变形量过小；控制氢含量≤0.015%'
+      },
+      {
+        title: '固溶温度不当',
+        cause: '固溶温度过高（>860℃）导致初生α相减少到20%，强度虽升高但塑性显著下降',
+        solution: '固溶温度控制在800-840℃范围；水冷比空冷更能细化组织，但需注意塑性下降风险'
+      },
+    ]
   },
-  problems:[
-    {title:"过烧（晶界熔化）",severity:"danger",cause:"固溶温度超出上限10-15℃",effect:"晶界熔化，力学性能急剧下降",solution:"严格控温493±3℃;采用分段加热"},
-    {title:"淬火变形",severity:"warn",cause:"淬火冷却不均匀",effect:"零件翘曲变形",solution:"预冷淬火(空气预冷30-60s再水冷);喷淋梯度冷却"},
-    {title:"淬火延迟导致性能下降",severity:"warn",cause:"从炉中取出到入水超过5s",effect:"晶界析出，力学性能和腐蚀抗力显著降低",solution:"转移延迟严格控制在5秒以内"},
-  ]
-},
-{
-  id:"2014",name:"2014",fullName:"2014",category:"aluminum",catName:"铝合金",
-  composition:"Al-Cu-Si-Mg系",type:"2系锻件常用合金",
-  betaTransus:"—",density:"2.80 g/cm³",
-  iconColor:"#34a853",
-  tags:["锻件","2系","可热处理强化"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"502±3℃",time:"20~60min(厚截面2~4h)",cooling:"室温水淬",notes:"比2024约高10℃;转移延迟≤10s"},
-    {process:"T4时效",temp:"室温",time:"≥96h",cooling:"自然冷却",notes:"固溶+自然时效"},
-    {process:"T6时效",temp:"160~175℃",time:"8~18h",cooling:"空冷",notes:"峰值硬度约在175℃/16h"},
-  ],
-  hotDeformation:{
-    tempRange:"300~480℃",optimalTemp:"380~450℃",
-    strainRateRange:"0.01~10 s⁻¹",optimalStrainRate:"0.1~5 s⁻¹",
-    forgingTemp:"440~480℃",finishForgeTemp:"≥350℃",
-    maxDeform:"—",activationEnergy:"—",
-    notes:"含Si使变形抗力略高于2024"
-  },
-  problems:[
-    {title:"过烧风险",severity:"warn",cause:"固溶温度偏高",effect:"晶界熔化",solution:"严格控温502±3℃"},
-  ]
-},
-{
-  id:"2219",name:"2219",fullName:"2219",category:"aluminum",catName:"铝合金",
-  composition:"Al-Cu-Mn系",type:"2系可焊性好铝合金",
-  betaTransus:"—",density:"2.84 g/cm³",
-  iconColor:"#34a853",
-  tags:["航天燃料箱","焊接结构","2系"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"535±5℃",time:"1.5~2h",cooling:"室温水淬",notes:"2系中固溶温度最高(Cu含量~6.3%);转移延迟≤10s"},
-    {process:"T6时效",temp:"175℃",time:"8~18h",cooling:"空冷",notes:"535℃/1.5h+175℃峰值时效为典型工艺"},
-    {process:"T8时效",temp:"175~190℃",time:"8~18h",cooling:"空冷",notes:"航天焊接结构常用"},
-    {process:"T87时效",temp:"175~190℃",time:"12~18h",cooling:"空冷",notes:"高强度状态，冷加工量5-7%"},
-  ],
-  hotDeformation:{
-    tempRange:"300~500℃",optimalTemp:"400~470℃",
-    strainRateRange:"0.01~10 s⁻¹",optimalStrainRate:"0.01~1 s⁻¹",
-    forgingTemp:"450~490℃",finishForgeTemp:"≥350℃",
-    maxDeform:"—",activationEnergy:"—",
-    notes:"高Cu含量(~6.3%)接近共晶点需严格温控"
-  },
-  problems:[
-    {title:"过烧敏感",severity:"warn",cause:"Cu含量高达6.3%，接近共晶点",effect:"晶界熔化",solution:"严格控制锻造和热处理温度"},
-  ]
-},
-{
-  id:"7075",name:"7075",fullName:"7075",category:"aluminum",catName:"铝合金",
-  composition:"Al-Zn-Mg-Cu系",type:"7系超高强度铝合金(超硬铝)",
-  betaTransus:"—",density:"2.81 g/cm³",
-  iconColor:"#34a853",
-  tags:["航空","超硬铝","7系"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"465±3℃(范围470~490℃)",time:"板材20~60min;厚截面≤4h",cooling:"冷水淬(20~35℃)",notes:"固溶窗口比2系更窄，过烧风险更高;转移延迟必须最短"},
-    {process:"T6时效",temp:"120~130℃",time:"24h",cooling:"空冷",notes:"峰值时效~500MPa，但SCC抗力低"},
-    {process:"T73双级时效",temp:"107℃+163℃",time:"6~8h+24~30h",cooling:"空冷",notes:"SCC抗力显著提升，强度较T6降低约13%"},
-    {process:"T76双级时效",temp:"107~121℃+157~168℃",time:"6~8h+14~20h",cooling:"空冷",notes:"过时效，SCC与强度介于T6和T73之间"},
-    {process:"T74双级时效",temp:"110~121℃+163~177℃",time:"6~8h+20~30h",cooling:"空冷",notes:"锻件常用，强度和SCC抗力平衡"},
-  ],
-  hotDeformation:{
-    tempRange:"300~480℃",optimalTemp:"380~450℃",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~1 s⁻¹",
-    forgingTemp:"380~430℃",finishForgeTemp:"≥300℃",
-    maxDeform:"55~60%",activationEnergy:"—",
-    notes:"7系锻造温度窗口比2系更窄;最优加工窗口400-450℃/0.01-0.1s⁻¹"
-  },
-  problems:[
-    {title:"淬火延迟极其敏感",severity:"danger",cause:"从炉中取出到入水超过5秒",effect:"晶界析出，严重降低力学性能和腐蚀抗力",solution:"转移延迟≤5s;淬火水需强力搅拌;控制水温≤35℃"},
-    {title:"应力腐蚀开裂(SCC)",severity:"danger",cause:"T6状态对SCC敏感",effect:"在腐蚀环境中开裂",solution:"采用T73/T74/T76双级过时效;冷压消除应力2-4%"},
-    {title:"过烧",severity:"danger",cause:"固溶温度超出窗口",effect:"晶界熔化，力学性能急剧下降",solution:"严格控温465±3℃;快速转移淬火"},
-  ]
-},
-{
-  id:"7050",name:"7050",fullName:"7050",category:"aluminum",catName:"铝合金",
-  composition:"Al-Zn-Mg-Cu-Zr系",type:"7075改进型，厚截面性能更优",
-  betaTransus:"—",density:"2.83 g/cm³",
-  iconColor:"#34a853",
-  tags:["厚截面锻件","7系","淬透性好"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"477±3℃(范围470~480℃)",time:"20~60min(锻件典型4h)",cooling:"温水淬(60~70℃)",notes:"含Zr淬透性好，可用温水淬减少变形"},
-    {process:"T74双级时效",temp:"121℃+177℃",time:"5h+4~10h",cooling:"空冷",notes:"厚截面锻件首选，强度与SCC抗力平衡"},
-    {process:"T76双级时效",temp:"121℃+163~168℃",time:"4~6h+10~16h",cooling:"空冷",notes:"SCC抗力优于T6，强度略高于T74"},
-  ],
-  hotDeformation:{
-    tempRange:"300~450℃",optimalTemp:"380~440℃",
-    strainRateRange:"0.01~10 s⁻¹",optimalStrainRate:"0.01~0.5 s⁻¹",
-    forgingTemp:"380~430℃",finishForgeTemp:"≥320℃",
-    maxDeform:"—",activationEnergy:"—",
-    notes:"Zr抑制再结晶，需稍高温度激活;高应变速率下变形抗力更大"
-  },
-  problems:[
-    {title:"淬火变形",severity:"warn",cause:"厚截面锻件淬火应力大",effect:"变形开裂",solution:"温水淬(60-70℃);冷压消除应力2-4%"},
-  ]
-},
-{
-  id:"7475",name:"7475",fullName:"7475",category:"aluminum",catName:"铝合金",
-  composition:"Al-Zn-Mg-Cu系",type:"7075改进型，断裂韧性和疲劳性能更优",
-  betaTransus:"—",density:"2.81 g/cm³",
-  iconColor:"#34a853",
-  tags:["飞机蒙皮","超塑性","7系"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"470~485℃",time:"板材20~60min",cooling:"室温水淬",notes:"与7075相近，纯度更高(Fe/Si杂质更低)"},
-    {process:"T6时效",temp:"120~130℃",time:"24h",cooling:"空冷",notes:"与7075-T6工艺基本相同"},
-    {process:"T73双级时效",temp:"107℃+163℃",time:"6~8h+24~30h",cooling:"空冷",notes:"与7075-T73工艺一致"},
-  ],
-  hotDeformation:{
-    tempRange:"300~480℃",optimalTemp:"380~450℃",
-    strainRateRange:"0.01~10 s⁻¹",optimalStrainRate:"0.01~1 s⁻¹",
-    forgingTemp:"380~440℃",finishForgeTemp:"≥300℃",
-    maxDeform:"—",activationEnergy:"—",
-    notes:"超塑成形515-530℃/2×10⁻⁴~2×10⁻³s⁻¹;延伸率>500%"
-  },
-  problems:[
-    {title:"淬火敏感性",severity:"warn",cause:"与7075相当",effect:"性能下降",solution:"快速淬火;转移延迟≤5s"},
-  ]
-},
 
-// ---- SUPERALLOYS ----
-{
-  id:"GH4169",name:"GH4169",fullName:"GH4169 (Inconel 718)",category:"superalloy",catName:"高温合金",
-  composition:"Ni-Cr-Fe基(γ'+γ\"双相强化)",type:"镍基高温合金",
-  betaTransus:"—",density:"8.24 g/cm³",
-  iconColor:"#ea4335",
-  tags:["涡轮盘","压气机盘","紧固件"],
-  heatTreatment:[
-    {process:"固溶处理(制度Ⅰ)",temp:"1010~1065℃±10℃",time:"1h",cooling:"快速冷却",notes:"高温固溶，晶粒粗化，无δ相，低温韧性好"},
-    {process:"固溶处理(制度Ⅱ/标准)",temp:"950~980℃±10℃",time:"1h",cooling:"快速冷却",notes:"标准制度，有δ相，综合性能优良，最常用"},
-    {process:"固溶处理(制度Ⅲ/直接时效)",temp:"省略固溶",time:"—",cooling:"—",notes:"直接时效，δ相较少，强度和冲击性能高"},
-    {process:"时效处理",temp:"720℃±5℃→620℃±5℃",time:"8h→8h",cooling:"50℃/h炉冷至620℃后空冷",notes:"γ\"相和γ'相协同强化，三类制度统一时效"},
-  ],
-  hotDeformation:{
-    tempRange:"900~1150℃",optimalTemp:"950~1050℃",
-    strainRateRange:"0.001~6000 s⁻¹(实验)",optimalStrainRate:"0.01~0.5 s⁻¹(工业)",
-    forgingTemp:"—",finishForgeTemp:"—",
-    maxDeform:"≤20%(单次);≥50%(总变形)",activationEnergy:"380 kJ/mol",
-    notes:"均匀态最优:0.01-0.1s⁻¹/1050-1100℃;中温轧制980℃/0.01s⁻¹后标准时效可达1350MPa"
+  // ============================
+  // TC18
+  // ============================
+  {
+    id: 'TC18', name: 'TC18', category: 'titanium',
+    formula: 'Ti-5Al-5Mo-5V-1Cr-1Fe',
+    betaTemp: '875±5℃',
+    desc: '近β型高强韧钛合金，高强度高韧性，可进行热处理强化',
+    application: '航空、航天高强结构件，高强紧固件',
+    keyProps: [
+      { label: '退火态抗拉强度', value: '≥1080 MPa' },
+      { label: '退火态屈服强度', value: '≥1000 MPa' },
+      { label: '延伸率', value: '≥8%' },
+    ],
+    heatTreatment: [
+      { process: '双重退火第一阶段', temp: '820-860℃（通常830℃）', time: '2h', cooling: 'furnace', note: '炉冷至第二阶段温度' },
+      { process: '双重退火第二阶段', temp: '740-760℃（通常750℃）', time: '2h', cooling: 'air', note: 'Vαp = 0.83×t₂ + 32.2' },
+      { process: '时效（低温）', temp: '570-575℃', time: '4-6h', cooling: 'air', note: '高强度，抗拉强度可达1467MPa' },
+      { process: '时效（中温）', temp: '585℃', time: '4h', cooling: 'air', note: '强塑匹配，抗拉1132MPa，延伸11.2%' },
+      { process: '时效（高温）', temp: '595℃', time: '4h', cooling: 'air', note: '塑性最优，延伸率12.3%' },
+      { process: '固溶处理', temp: '980-1020℃', time: '1-3h', cooling: 'water/air', note: '水淬提高强度和韧性' },
+      { process: 'β稳定化处理', temp: '810-845℃（tβ-30~60℃）', time: '1-3h', cooling: 'furnace/air', note: '控制β晶粒尺寸297-857μm' },
+    ],
+    deformation: {
+      process: '热压缩/等温锻造/热轧',
+      zones: [
+        { label: '单相β区变形', value: '860-950℃', note: '低应变速率利于DRX', type: 'temp' },
+        { label: '两相区变形', value: '750-860℃', note: '推荐主加工区间', type: 'temp' },
+        { label: '应变速率范围', value: '0.001-10 s⁻¹', note: '工业应用范围', type: 'rate' },
+        { label: '等温锻造温度', value: '840℃（终锻）', note: '应变速率0.01-10 s⁻¹', type: 'temp' },
+        { label: '禁忌区域', value: '700-730℃ / 0.05-0.1 s⁻¹', note: '易组织异常/开裂', type: 'warn' },
+      ],
+      detail: '不稳定性区域：700-730℃变形温度和0.05-0.1 s⁻¹应变速率；动态再结晶：CDRX（连续DRX）和GDRX（几何DRX）协同作用；高温（980℃）低速（0.001 s⁻¹）DRX体积分数可达50.1%；热轧临界损伤值：0.68，超过则易开裂'
+    },
+    issues: [
+      {
+        title: '氢脆与氢致开裂',
+        cause: '氢含量>0.015%时形成氢化物（TiH₂），阻碍位错运动并引发裂纹；腐蚀环境（如海水）加速氢渗透',
+        solution: '严格控制氢含量≤0.015%；表面阳极氧化或热氧化处理；脱氢：250-350℃真空退火2-4h；避免含氢环境加工'
+      },
+      {
+        title: 'α脆化层',
+        cause: '高温长时间加热（>980℃）导致氧/氮扩散进入表层，使表层α相过量析出形成脆性层',
+        solution: '固溶温度≤980℃或严格控制保温时间；采用微氧化性气氛或真空环境；机械清理或喷砂替代酸洗'
+      },
+      {
+        title: '绝热剪切带（ASB）导致动态失效',
+        cause: '高应变速率（1×10⁶ s⁻¹）下局部温升至1025-1132K，形成超细晶粒和层片α相，引发裂纹',
+        solution: '控制应变速率<1×10⁵ s⁻¹；避免变形温度超过882℃；双重退火细化α相，减少界面应力集中'
+      },
+      {
+        title: 'β晶粒过度长大',
+        cause: '固溶温度过高或保温时间过长导致晶粒尺寸超过857μm',
+        solution: '固溶温度≤1000℃；优化保温时间（1-3h）；采用分段加热方式'
+      },
+      {
+        title: '织构各向异性',
+        cause: '热变形形成强β∥FD织构，横向塑性显著降低',
+        solution: '高温低速变形促进DRX，弱化织构；多道次锻造均匀化变形；EBSD分析监测织构演变'
+      },
+    ]
   },
-  problems:[
-    {title:"δ相控制不当",severity:"danger",cause:"固溶温度选择不当影响δ相形貌和分布",effect:"缺口敏感性或综合性能失衡",solution:"根据需求选择热处理制度;制度Ⅱ(标准)最常用"},
-    {title:"长期时效导致γ\"相粗化",severity:"warn",cause:"长期时效(如1000h)",effect:"γ\"相粗化至80-100nm，δ相沿晶界聚集，低周疲劳寿命缩短",solution:"避免过度长期高温服役;定期检测组织"},
-    {title:"冷变形量过大",severity:"warn",cause:"冷变形量超过50%",effect:"塑性显著下降，疲劳寿命缩短",solution:"冷变形量控制在10%-40%;配合固溶处理"},
-  ]
-},
-{
-  id:"GH4698",name:"GH4698",fullName:"GH4698",category:"superalloy",catName:"高温合金",
-  composition:"镍铬基沉淀硬化型变形高温合金",type:"镍基高温合金",
-  betaTransus:"—",density:"8.32 g/cm³",
-  iconColor:"#ea4335",
-  tags:["涡轮盘","高温紧固件","750~800℃"],
-  heatTreatment:[
-    {process:"固溶处理",temp:"1110~1180℃(航空锻件1110-1130℃)",time:"8~8.5h",cooling:"空冷",notes:"1160℃固溶可获得最均匀晶粒组织"},
-    {process:"中间处理",temp:"990~1010℃(通常1000℃)",time:"4~4.5h",cooling:"空冷",notes:"促进γ'相均匀分布，抑制有害相析出"},
-    {process:"标准时效",temp:"775℃±10℃",time:"16h",cooling:"空冷",notes:"γ'相尺寸30-50nm"},
-    {process:"优化时效Ⅰ",temp:"775℃+700℃",time:"16h+16~24h",cooling:"空冷",notes:"双级时效，进一步细化晶界析出相"},
-  ],
-  hotDeformation:{
-    tempRange:"1000~1200℃",optimalTemp:"1160~1000℃(最佳塑性区间)",
-    strainRateRange:"0.01~100 s⁻¹(实验)",optimalStrainRate:"0.01~0.5 s⁻¹(工业)",
-    forgingTemp:"1160~1180℃",finishForgeTemp:"—",
-    maxDeform:"≤50%(单次)",activationEnergy:"425 kJ/mol",
-    notes:"最佳塑性区间1160-1000℃;冷拔变形量≤50%，分4-5道次"
-  },
-  problems:[
-    {title:"晶粒异常长大",severity:"danger",cause:"热轧棒材固溶处理后可能出现",effect:"严重影响产品性能",solution:"冷拔变形后补充1110℃×1h/AC固溶处理可抑制"},
-    {title:"冷拔变形量过大",severity:"warn",cause:"冷拔变形量超过50%",effect:"塑性显著降低",solution:"冷拔量控制在36%左右;分4-5道次(8-12%/道次)"},
-  ]
-},
 
-// ---- ULTRA-HIGH STRENGTH STEELS ----
-{
-  id:"A100",name:"A-100",fullName:"A-100 (AerMet® 100)",category:"steel",catName:"超高强度钢",
-  composition:"Fe-Co-Ni基(C:0.21-0.25, Co:13-14, Ni:11-12, Cr:2.9-3.3, Mo:1.1-1.3)",type:"二次硬化型超高强度马氏体合金钢",
-  betaTransus:"AC1:574℃ / AC3:829℃",density:"7.9 g/cm³",
-  iconColor:"#9334e6",
-  tags:["起落架","断裂韧性","二次硬化"],
-  heatTreatment:[
-    {process:"正火(供应状态)",temp:"899℃±14",time:"60min±15",cooling:"空冷",notes:"均匀化组织"},
-    {process:"过时效退火",temp:"677℃±14",time:"≥16h",cooling:"空冷",notes:"软化至≤372HB，改善机加工性"},
-    {process:"固溶处理",temp:"885℃±14℃",time:"1h",cooling:"—",notes:"必须使用热电偶监测;中性气氛/盐浴/真空防止脱碳"},
-    {process:"淬火",temp:"—",time:"1~2h内冷至66℃以下",cooling:"大截面油淬;小截面空冷;严禁水淬",notes:"必须用热电偶监测冷却速率"},
-    {process:"冷处理",temp:"-73℃±8℃",time:"≥1h",cooling:"空气中自然回暖",notes:"转变残余奥氏体"},
-    {process:"时效处理",temp:"482℃±6℃",time:"5h",cooling:"空冷",notes:"不得低于468℃;标准时效后53-54HRC"},
-  ],
-  hotDeformation:{
-    tempRange:"850~1200℃",optimalTemp:"1000~1100℃",
-    strainRateRange:"0.001~10 s⁻¹",optimalStrainRate:"0.01~0.1 s⁻¹",
-    forgingTemp:"—",finishForgeTemp:"—",
-    maxDeform:"—",activationEnergy:"261.2 kJ/mol",
-    notes:"850℃动态回复;900-1200℃动态再结晶;热加工窗口窄"
+  // ============================
+  // TC21
+  // ============================
+  {
+    id: 'TC21', name: 'TC21', category: 'titanium',
+    formula: 'Ti-6Al-2Mo-1.5Cr-2.5Sn-2Zr-0.1Si',
+    betaTemp: '约975℃',
+    desc: '高强高韧损伤容限型钛合金，断裂韧性优异',
+    application: '航空主结构件、飞机框架、机翼接头',
+    keyProps: [
+      { label: '固溶时效抗拉强度', value: '1131-1350 MPa' },
+      { label: '断后伸长率', value: '9.4-16.5%' },
+      { label: '断面收缩率', value: '20-32.6%' },
+    ],
+    heatTreatment: [
+      { process: '均匀化处理', temp: '1000℃', time: '20-30min', cooling: 'air', note: '略高于β相变点，单一马氏体组织' },
+      { process: '一级退火', temp: '900-910℃', time: '按厚度(0.5min/mm+1-2h)', cooling: 'air', note: '消除残余应力，改善均匀性' },
+      { process: '二级退火（时效前处理）', temp: '560-580℃', time: '1-4h', cooling: 'air', note: '促进α相析出和球化' },
+      { process: '固溶处理', temp: '900-940℃（tβ-30~70℃）', time: '1-2h', cooling: 'air', note: '900℃+600℃时效：抗拉1350MPa' },
+      { process: '时效处理', temp: '500-600℃', time: '2-4h', cooling: 'air', note: '550-590℃为最佳，析出次生α相' },
+      { process: '焊后退火', temp: '570℃', time: '1h', cooling: '-', note: '接头强度1131.4MPa，伸长率9.4%' },
+    ],
+    deformation: {
+      process: '热锻/热轧/准β锻造',
+      zones: [
+        { label: '低温加工窗口', value: '720-760℃', note: '应变速率0.01-0.032 s⁻¹', type: 'temp' },
+        { label: '中温加工窗口', value: '800-840℃', note: '应变速率0.01-0.056 s⁻¹', type: 'temp' },
+        { label: '高温加工窗口', value: '890-990℃', note: '应变速率0.001-10 s⁻¹', type: 'temp' },
+        { label: '准β锻造', value: 'tβ+15-25℃', note: '两墩两拔，变形量70%', type: 'deform' },
+        { label: '开坯锻造', value: '1000-1150℃', note: '终锻≥800℃，锻比5.6-8.4', type: 'deform' },
+      ],
+      detail: '热轧：加热830-1000℃，终轧≥750℃，应变速率1-10 s⁻¹；准β锻造：tβ+15-25℃，两墩两拔，墩粗压下量70%，高径比1.9-2.0；β锻造：tβ+40-50℃，变形量70-80%'
+    },
+    issues: [
+      {
+        title: 'α相分布不均',
+        cause: 'α板条宽度呈双峰分布，冷却速率控制不当导致α相析出不均匀',
+        solution: '采用电弧增材TC21均匀化热处理，通过气体冷却和感应线圈加热使构件快速达到目标温度，获得均匀分布α板条'
+      },
+      {
+        title: '表面氧化裂纹',
+        cause: '高温锻造（>950℃）时与空气接触导致氧化皮下应力集中',
+        solution: '控制锻造温度在β相变点以下；采用保护气氛（氩气）热处理；严格控制冷却速率'
+      },
+      {
+        title: '内部裂纹',
+        cause: '材料存在严重偏析/夹杂；小规格材料拔长过程降温快导致温度梯度大；变形温度过低（<900℃）α相变形抗力大',
+        solution: '严格控制原材料质量；采用"以轧代锻"工艺；控制变形温度在900-950℃'
+      },
+      {
+        title: '焊缝脆化裂纹',
+        cause: '焊接过程中快速冷却导致β相转变为针状马氏体α\'相，硬度过高',
+        solution: '焊后热处理570℃保温1h，使焊缝区析出大量细小二次片层状α相，恢复损伤容限组织特征'
+      },
+      {
+        title: '过时效/欠时效',
+        cause: '时效温度过高（>600℃）或时间过长（>8h）导致α相过度析出（过时效）；时效参数不足导致强度不足（欠时效）',
+        solution: '控制时效温度500-590℃，保温时间2-4h；以轧代锻结合双重退火'
+      },
+    ]
   },
-  problems:[
-    {title:"脱碳",severity:"danger",cause:"固溶处理时未采用保护气氛",effect:"表面脱碳降低性能",solution:"采用中性气氛炉、盐浴或真空"},
-    {title:"严禁水淬",severity:"danger",cause:"水淬导致开裂",effect:"零件开裂报废",solution:"大截面油淬;小截面空冷"},
-    {title:"晶粒粗化",severity:"warn",cause:"热加工温度过高",effect:"强度和韧性降低",solution:"温度控制在1000-1100℃"},
-    {title:"机加工困难",severity:"warn",cause:"硬度高",effect:"刀具磨损严重",solution:"需超硬刀具与低速切削"},
-  ]
-},
-{
-  id:"300M",name:"300M",fullName:"300M (改型4340)",category:"steel",catName:"超高强度钢",
-  composition:"Fe-C-Si-Mn-Cr-Ni-Mo-V系(C:0.39-0.44, Si:1.5-1.8)",type:"真空熔炼低合金超高强度钢",
-  betaTransus:"Ms:~277℃ / Bs:~466℃",density:"7.83 g/cm³",
-  iconColor:"#9334e6",
-  tags:["起落架","ARJ21","低合金超高强度"],
-  heatTreatment:[
-    {process:"正火+回火(NT)",temp:"927℃(正火)+650℃(回火)",time:"1h+4h",cooling:"空冷+空冷",notes:"改善组织和机加工性"},
-    {process:"常规淬火+回火(CQT)",temp:"870℃(奥氏体化)+290℃×2次回火",time:"1h+2h×2",cooling:"油淬+空冷",notes:"工业常用;回火300℃时强度塑韧性最佳匹配"},
-    {process:"等温热处理(IST/最优)",temp:"870℃(奥氏体化)+300℃(等温)+180℃(回火)",time:"1h+30min+2h",cooling:"油淬+空冷",notes:"最佳工艺;复相组织实现最优强度-韧性匹配;延伸率22%"},
-    {process:"改进热处理(MAT)",temp:"870℃+290℃×2+180℃",time:"1h+2h×2+2h",cooling:"油淬+空冷",notes:"CQT基础上增加低温回火"},
-  ],
-  hotDeformation:{
-    tempRange:"850~1150℃",optimalTemp:"900~1100℃",
-    strainRateRange:"0.001~50 s⁻¹",optimalStrainRate:"0.01~10 s⁻¹",
-    forgingTemp:"—",finishForgeTemp:"—",
-    maxDeform:"—",activationEnergy:"353~392 kJ/mol",
-    notes:"低应变速率+高温=动态再结晶(DDRX);高应变速率=连续动态再结晶(CDRX)"
+
+  // ============================
+  // TC25
+  // ============================
+  {
+    id: 'TC25', name: 'TC25', category: 'titanium',
+    formula: 'Ti-6.5Al-2Sn-4Zr-4Mo-1W-0.2Si',
+    betaTemp: '1029±5℃',
+    desc: 'α+β型马氏体热强钛合金，500-550℃工作，高温强度优异',
+    application: '航空发动机压气机盘、涡轮叶片等高温部件',
+    keyProps: [
+      { label: '室温抗拉强度', value: '≥1030 MPa' },
+      { label: '550℃持久强度(640MPa/50h)', value: '≥640 MPa' },
+      { label: '断裂韧性 KIC', value: '≥24 J' },
+      { label: '最高工作温度', value: '550℃' },
+    ],
+    heatTreatment: [
+      { process: '一次退火（网篮组织）', temp: '989-994℃（tβ-35~40℃）', time: '1-4h', cooling: 'air', note: '风冷吹风≥5min，α相含量15-25%' },
+      { process: '一次退火（双态组织）', temp: '994-1000℃（tβ-30~35℃）', time: '1-4h', cooling: 'fan', note: '风冷，装炉间距≥50mm' },
+      { process: '二次退火', temp: '540-560℃（标准TC25）', time: '6h', cooling: 'air', note: '≥600℃时塑性和冲击性能显著下降' },
+      { process: '固溶处理', temp: '969-989℃（tβ-40~60℃）', time: '1-3h', cooling: 'air', note: '保持亚稳β相过饱和状态' },
+      { process: '时效处理', temp: '550-590℃', time: '6-8h', cooling: 'air', note: '550-580℃为最佳强塑匹配' },
+      { process: 'HIP处理（增材/铸件）', temp: '1000-1100℃', time: '6-8h', cooling: 'furnace', note: '压力160-180MPa，氩气介质' },
+    ],
+    deformation: {
+      process: 'β锻造/两相区锻造/等温模锻',
+      zones: [
+        { label: 'β锻造温度', value: '1039-1069℃（tβ+10~40℃）', note: '变形量40-80%', type: 'temp' },
+        { label: '上两相区锻造', value: '1014-1029℃', note: '应变速率0.05-0.25 s⁻¹', type: 'temp' },
+        { label: '下两相区锻造', value: '979-989℃', note: '应变速率0.01-0.1 s⁻¹', type: 'temp' },
+        { label: '等温模锻', value: '950-1000℃', note: '应变速率10⁻⁴-10⁻² s⁻¹', type: 'temp' },
+        { label: '总锻比', value: '≥6.5', note: '确保组织均匀性', type: 'deform' },
+      ],
+      detail: '等温模锻：变形力降至常规热锻的1/5-1/10，单次变形量可达40-50%；热压缩实验温度950-1100℃，应变速率0.001-10 s⁻¹；终锻温度≥950℃，避免高温时间过长导致晶粒长大'
+    },
+    issues: [
+      {
+        title: 'β斑（成分偏析）',
+        cause: '熔炼过程中成分偏析（特别是铸锭头尾），导致局部富钼区，α相分布不均匀',
+        solution: '三次真空自耗电弧熔炼（三次VAR），成分偏析≤5%；铸锭在β相变点以上150-250℃轻击破碎粗晶，初始变形量20-30%'
+      },
+      {
+        title: 'ω相脆性',
+        cause: '与合金成分（铝含量）和冷却速率密切相关，在某些工艺条件下形成脆性ω相（Ti₃Al相），韧性急剧下降',
+        solution: 'TC25G中降低铝含量，增加钼和锆含量；冷却速率控制≤150℃/s；时效温度选择550-580℃'
+      },
+      {
+        title: '二次退火温度超标',
+        cause: '二次退火温度超过600℃时，强度轻微升高，但延伸率、断面收缩率和冲击性能明显下降，冲击功可能低于24J',
+        solution: '严格控制二次退火温度在540-560℃；超温后需重新进行热处理，并增加力学性能检测'
+      },
+      {
+        title: 'α脆化层开裂',
+        cause: '高温下氧和氮向金属内部扩散，增加表面金属中O/N含量，导致α相含量增加，形成脆性层引发坯料开裂',
+        solution: '预氧化处理形成光滑表面；采用玻璃珐琅涂层保护；控制炉气氧化性气氛；避免终锻温度低于950℃'
+      },
+      {
+        title: '微织构不均匀',
+        cause: '初生α相的钉扎作用导致晶体取向顽固性，影响疲劳性能和超声探伤质量',
+        solution: '在相变点以上10℃进行变形促进连续再结晶；采用2-3火次镦拔工艺确保各向变形均匀；采用回炉补温方式缩短加热时间'
+      },
+    ]
   },
-  problems:[
-    {title:"回火脆性",severity:"danger",cause:"回火温度选择不当",effect:"韧性降低",solution:"优选IST工艺(300℃等温);CQT回火温度控制在290-300℃"},
-    {title:"氢脆",severity:"danger",cause:"超高强度钢对氢脆敏感",effect:"延迟断裂",solution:"真空熔炼降低氢含量;避免电镀等引入氢的工序"},
-    {title:"焊接裂纹",severity:"warn",cause:"碳当量较高",effect:"焊接热影响区裂纹",solution:"焊前预热;焊后及时热处理"},
-  ]
-},
+
+  // ============================
+  // TA15
+  // ============================
+  {
+    id: 'TA15', name: 'TA15', category: 'titanium',
+    formula: 'Ti-6.5Al-2Zr-1Mo-1V',
+    betaTemp: '约998℃',
+    desc: '近α型钛合金，高铝当量，优异中温强度，良好可焊性',
+    application: '航空发动机部件、飞机结构件、焊接承力框架',
+    keyProps: [
+      { label: '室温抗拉强度', value: '≥980 MPa' },
+      { label: '500℃抗拉强度', value: '≥850 MPa' },
+      { label: '断裂韧性', value: '≥75 MPa·m¹/²' },
+      { label: '最高使用温度', value: '500℃' },
+    ],
+    heatTreatment: [
+      { process: '完全退火', temp: '700-800℃', time: '15-60min', cooling: 'air', note: '消除残余应力，初生α相球化' },
+      { process: '高温退火', temp: '700-850℃', time: '1-4h', cooling: 'air', note: '棒材/锻件，初生α相减少，β转变组织增多' },
+      { process: '去应力退火', temp: '600-650℃', time: '0.5-8h', cooling: 'air', note: '消除焊接/加工内应力70-80%' },
+      { process: '双级退火第一级（增材件）', temp: '880-930℃', time: '120min', cooling: 'furnace', note: '冷却速率1.6-1.8℃/min，消除马氏体' },
+      { process: '双级退火第二级（增材件）', temp: '650±10℃', time: '240min', cooling: 'furnace', note: '优化α相形态（短棒状≤4μm），延伸率≥20%' },
+      { process: '固溶处理（STA）', temp: '930±10℃', time: '1.5h', cooling: 'water/air', note: '低于β相变点约70℃' },
+      { process: '时效处理', temp: '550-600℃', time: '4-5h', cooling: 'air', note: '析出次生α相，三态组织（αp+αs+β）' },
+    ],
+    deformation: {
+      process: '热轧/等温锻造/挤压',
+      zones: [
+        { label: '安全加工区间', value: '880-980℃', note: '应变速率0.1-3 s⁻¹', type: 'temp' },
+        { label: '锻造温度（推荐）', value: 'tβ-30~50℃（948-968℃）', note: '各向异性小，强度好', type: 'temp' },
+        { label: '等温锻造', value: '800-850℃', note: '应变速率10⁻⁴-10⁻² s⁻¹', type: 'temp' },
+        { label: '应变量范围', value: '0.2-0.6', note: '热加工安全区间', type: 'deform' },
+      ],
+      detail: '三道次热轧：第一轧程950-980℃；第二轧程900-930℃；第三轧程850-880℃；挤压：900-950℃，挤压比76.1-84.6；等温锻造：800-850℃，模具与坯料等温，变形量30-60%；变形量对组织影响：60%时初生αp相含量降至40%，DRX体积分数增至38%'
+    },
+    issues: [
+      {
+        title: '晶间开裂（花斑组织）',
+        cause: '表面污染或局部短时超温导致杂质富集在晶界，在应力作用下沿晶界扩展',
+        solution: '严格控制表面清洁度；在真空或惰性气体中进行热处理；避免局部过热；控制氧含量≤500ppm'
+      },
+      {
+        title: '增材制造件全α\'马氏体',
+        cause: '激光选区熔化（SLM）或激光熔化沉积（LMD）制备时快速冷却形成单α\'马氏体，硬度高塑性差',
+        solution: '双级退火工艺：880-930℃/2h炉冷（1.6-1.8℃/min）+650℃/4h炉冷；确保延伸率≥20%，强度≥950MPa'
+      },
+      {
+        title: '各向异性',
+        cause: '锻造温度较高（tβ-15℃）时，α相含量较少、片层状α相厚，三个方向性能极差较大',
+        solution: '降低锻造温度至tβ-50℃（948℃）；初生αp相含量55-60%，片层α相较薄，各向异性极差最小'
+      },
+      {
+        title: '残余应力与变形',
+        cause: '增材制造或焊接后产生较大残余应力，可能导致变形或裂纹',
+        solution: '去应力退火600-650℃/0.5-8h；可消除70-80%的焊接应力；避免高温长时间保温导致晶粒粗化'
+      },
+    ]
+  },
+
+  // ============================
+  // 2024 铝合金
+  // ============================
+  {
+    id: '2024', name: '2024铝合金', category: 'aluminum',
+    formula: 'Al-Cu-Mg (Cu:4.3%)',
+    betaTemp: '-',
+    desc: '铝-铜系高强铝合金，优良抗疲劳性能',
+    application: '机身蒙皮、机翼结构件、航空关键部件',
+    keyProps: [
+      { label: 'T6态抗拉强度', value: '≥440 MPa' },
+      { label: 'T3自然时效', value: '室温≥96h' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理', temp: '495±5℃', time: '1.5min/mm', cooling: 'water', note: '转移时间≤15s，水温20-30℃' },
+      { process: '人工时效', temp: '120-175℃', time: '12-24h', cooling: 'air', note: '抗拉强度≥440MPa，T6状态' },
+      { process: '自然时效', temp: '室温', time: '≥96h', cooling: '-', note: 'T3状态，用于成形件' },
+      { process: '退火处理', temp: '350-400℃', time: '30-120min', cooling: 'furnace', note: '炉冷至300℃后空冷，O状态' },
+    ],
+    deformation: {
+      process: '热轧/热压缩',
+      zones: [
+        { label: '热轧温度', value: '350-500℃', note: '终轧温度≥350℃', type: 'temp' },
+        { label: '最佳工艺区间', value: '380-460℃', note: '应变速率0.01-1 s⁻¹', type: 'temp' },
+        { label: '应变速率范围', value: '0.01-10 s⁻¹', note: '-', type: 'rate' },
+        { label: '道次变形量', value: '≤20%', note: '防止开裂', type: 'deform' },
+      ],
+      detail: '热轧/热压缩温度350-500℃，最佳工艺区间380-460℃；应变速率0.01-10 s⁻¹；终轧温度≥350℃；每道次变形量≤20%；低温下动态回复为主，高温下动态再结晶'
+    },
+    issues: [
+      {
+        title: '淬火变形与开裂',
+        cause: '淬火过程内外温差大，厚截面或复杂形状工件产生热应力集中，导致翘曲或裂纹',
+        solution: '优化夹具设计（降低变形量30%）；控制淬火转移时间≤15s；复杂件用较高温度水（50-80℃）或聚合物溶液；淬火后预拉伸1.5-3%消除残余应力'
+      },
+      {
+        title: '时效不足或过时效',
+        cause: '时效温度或时间控制不当，导致强度不达标或析出相粗化、耐蚀性恶化',
+        solution: '精准制定时效制度，定期测硬度对照时效曲线；回归再时效（RRA）工艺：185℃/40min回归处理后再时效，可恢复强度并改善耐蚀性'
+      },
+      {
+        title: '晶界腐蚀与应力腐蚀开裂',
+        cause: '时效过度导致晶界析出相连续分布，晶界弱化；固溶处理不充分',
+        solution: '控制时效温度和时间，双级时效可平衡强度与耐蚀性；微合金化添加Zr、Cr等细化晶粒；循环塑性处理+缓慢加热时效（10℃/h），使晶界析出相断续分布'
+      },
+    ]
+  },
+
+  // ============================
+  // 7075 铝合金
+  // ============================
+  {
+    id: '7075', name: '7075铝合金', category: 'aluminum',
+    formula: 'Al-Zn-Mg-Cu (Zn:5.6%)',
+    betaTemp: '-',
+    desc: '铝-锌-镁-铜系超高强铝合金',
+    application: '飞机主结构件、起落架、B柱等承力部件',
+    keyProps: [
+      { label: 'T6态抗拉强度', value: '≥572 MPa' },
+      { label: 'T73抗应力腐蚀', value: 'KISCC显著提升' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理', temp: '463-480℃', time: '2h', cooling: 'water', note: '水温20-30℃，转移时间≤15s' },
+      { process: '人工时效（T6）', temp: '120℃', time: '24h', cooling: 'air', note: '抗拉强度≥572MPa，最高强度态' },
+      { process: '双级时效（T73）', temp: '105℃/8h + 175℃/8h', time: '8h+8h', cooling: 'air', note: '提升抗应力腐蚀，强度损失≤15%' },
+      { process: '预拉伸+时效（T651）', temp: '固溶+1.5-3%预拉伸+120℃时效', time: '-', cooling: 'water+air', note: '消除淬火残余应力，保持高强度' },
+      { process: '摩擦搅拌焊后时效', temp: '170℃', time: '14h', cooling: 'air', note: '恢复强度至母材65-70%' },
+    ],
+    deformation: {
+      process: '热锻/热轧',
+      zones: [
+        { label: '热变形温度', value: '350-500℃', note: '-', type: 'temp' },
+        { label: '最佳工艺区间', value: '380-460℃', note: '应变速率0.01-1 s⁻¹', type: 'temp' },
+        { label: '热冲压温度', value: '200-480℃', note: '应变速率0.001-10 s⁻¹', type: 'temp' },
+        { label: '应变速率', value: '0.001-10 s⁻¹', note: '-', type: 'rate' },
+      ],
+      detail: '热锻/热轧温度350-500℃；最佳工艺区间380-460℃，应变速率0.01-1 s⁻¹；热冲压温度200-480℃；低温下动态回复为主，高温下动态再结晶；预拉伸变形量1.5%-3%消除淬火应力'
+    },
+    issues: [
+      {
+        title: '应力腐蚀开裂（SCC）',
+        cause: '晶界η相（MgZn₂）在短横向方向连续析出，在应力和腐蚀介质共同作用下沿晶界开裂',
+        solution: '采用T73或T7351双级时效（105℃/8h+175℃/8h）；回归再时效（RRA）工艺：105℃/24h+185℃/40min+120℃/24h'
+      },
+      {
+        title: '淬火变形',
+        cause: '大截面件淬火时内外温差大，产生热应力和相变应力叠加导致翘曲',
+        solution: '控制淬火转移时间≤15s；预拉伸1.5-3%；厚件用较高温水（50-80℃）减缓冷却'
+      },
+    ]
+  },
+
+  // ============================
+  // 7050
+  // ============================
+  {
+    id: '7050', name: '7050铝合金', category: 'aluminum',
+    formula: 'Al-Zn-Mg-Cu (Zn:6.2%)',
+    betaTemp: '-',
+    desc: '高强铝合金，优异抗应力腐蚀，厚截面均匀性好',
+    application: '飞机翼梁、龙骨梁等关键承力结构件',
+    keyProps: [
+      { label: 'T6态抗拉强度', value: '≥572 MPa' },
+      { label: 'T73态KISCC', value: '≥25 MPa·√m' },
+      { label: '最大截面厚度', value: '≤150mm' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理', temp: '475±3℃', time: '2min/mm', cooling: 'water', note: '最大厚度≤150mm，转移≤15s' },
+      { process: '单级时效（T6）', temp: '120℃', time: '24h', cooling: 'air', note: '抗拉强度≥572MPa' },
+      { process: '过时效（T73）', temp: '120℃/6h→175℃/8h', time: '6h+8h', cooling: 'air', note: 'KISCC≥25MPa·√m' },
+      { process: '双级时效（T7451）', temp: '105℃/24h+175℃/8h', time: '24h+8h', cooling: 'air', note: '平衡强度与耐蚀性，抗拉≥540MPa' },
+    ],
+    deformation: {
+      process: '温压/热轧',
+      zones: [
+        { label: '变形温度', value: '333-523℃', note: '-', type: 'temp' },
+        { label: '最佳工艺区间', value: '350-450℃', note: '应变速率0.01-0.1 s⁻¹', type: 'temp' },
+        { label: '应变速率', value: '0.001-10 s⁻¹', note: '-', type: 'rate' },
+      ],
+      detail: '温压/热轧变形温度333-523℃；最佳工艺区间350-450℃，应变速率0.01-0.1 s⁻¹；低温下动态回复为主，高温下动态再结晶'
+    },
+    issues: [
+      {
+        title: '厚板心部性能不均',
+        cause: '厚截面淬火时心部冷却速率不足，析出相粗化，强度偏低',
+        solution: '固溶处理最大厚度≤150mm；控制淬火转移时间≤15s；采用T7451双级时效平衡强度与耐蚀性'
+      },
+    ]
+  },
+
+  // ============================
+  // 2219
+  // ============================
+  {
+    id: '2219', name: '2219铝合金', category: 'aluminum',
+    formula: 'Al-Cu-Mn (Cu:6.3%)',
+    betaTemp: '-',
+    desc: '高铜含量铝合金，优异焊接性，良好高温强度',
+    application: '航空航天燃料箱、低温容器、火箭连接环',
+    keyProps: [
+      { label: 'T6态抗拉强度', value: '≥414 MPa' },
+      { label: 'T87态抗拉强度', value: '≥476 MPa' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理', temp: '530℃', time: '1h', cooling: 'water', note: '水温20-30℃，冷速≥100℃/s' },
+      { process: '人工时效（T6）', temp: '175℃', time: '12h', cooling: 'air', note: '抗拉≥414MPa，屈服≥290MPa' },
+      { process: '冷处理+时效（T851）', temp: '530℃固溶+冷处理+175℃时效', time: '1h+1h+12h', cooling: 'water+air', note: '抗拉≥455MPa，屈服≥350MPa' },
+      { process: '预变形+时效（T87）', temp: '530℃固溶+1.5-3%冷加工+175℃时效', time: '-', cooling: '-', note: '抗拉≥476MPa，屈服≥503MPa' },
+    ],
+    deformation: {
+      process: '热锻/热挤压',
+      zones: [
+        { label: '热变形温度', value: '380-460℃', note: '-', type: 'temp' },
+        { label: '最佳工艺区间', value: '400-450℃', note: '应变速率0.5-5 s⁻¹', type: 'temp' },
+        { label: '应变速率', value: '0.1-15 s⁻¹', note: '-', type: 'rate' },
+        { label: '终锻温度', value: '≥350℃', note: '道次变形量≤15%', type: 'deform' },
+      ],
+      detail: '热锻/热挤压温度380-460℃；最佳工艺区间400-450℃，应变速率0.5-5 s⁻¹；终锻温度≥350℃，每道次变形量≤15%；优良的焊接性，常用于航天燃料箱'
+    },
+    issues: [
+      {
+        title: '焊接热裂纹',
+        cause: '高铜含量导致焊接凝固裂纹倾向较大',
+        solution: '采用氩弧焊或摩擦搅拌焊；焊后热处理恢复强度；严格控制焊接热输入'
+      },
+    ]
+  },
+
+  // ============================
+  // A-100 (AerMet100)
+  // ============================
+  {
+    id: 'A100', name: 'A-100 (AerMet100)', category: 'steel',
+    formula: 'Fe-Co-Ni-Cr-Mo-C',
+    betaTemp: '-',
+    desc: 'Co-Ni基马氏体合金钢，超高强度+优异韧性，碳化物析出强化',
+    application: '飞机起落架、高强紧固件、航空航天承力结构件',
+    keyProps: [
+      { label: '最小抗拉强度', value: '280ksi (≈1930 MPa)' },
+      { label: '断裂韧性 KIC', value: '≥110 MPa·m¹/²' },
+      { label: '最高使用温度', value: '427℃' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理（AMS 6532）', temp: '885±14℃', time: '1h', cooling: 'fan/oil', note: '截面≤50mm风冷；>50mm油淬至66℃；冷却时间1-2h' },
+      { process: '冷处理', temp: '-73℃', time: '1h', cooling: 'air', note: '消除残余奥氏体，提高尺寸稳定性' },
+      { process: '时效处理', temp: '482±6℃', time: '5h', cooling: 'air', note: '析出纳米级M₂C碳化物，二次硬化' },
+      { process: '正火（预处理）', temp: '899℃', time: '1h', cooling: 'air', note: '细化晶粒，改善加工性' },
+      { process: '过老化退火（软化）', temp: '677℃', time: '16h', cooling: 'air', note: '软化至≤40HRC，便于加工' },
+    ],
+    deformation: {
+      process: '热锻造',
+      zones: [
+        { label: '工业锻造温度', value: '1050-1100℃', note: '始锻温度', type: 'temp' },
+        { label: '终锻温度', value: '≥900℃', note: '避免晶粒粗化', type: 'temp' },
+        { label: '推荐应变速率', value: '≈10 mm/s', note: '获得细晶组织', type: 'rate' },
+        { label: '每火次变形量', value: '≥20%', note: '保证动态再结晶', type: 'deform' },
+      ],
+      detail: '热压缩实验温度850-1200℃；工业锻造温度1050-1100℃，终锻温度≥900℃；推荐变形速率约10mm/s；动态再结晶：850℃以下主要动态回复，850-1200℃可发生动态再结晶；终锻后缓慢冷却（砂冷或灰冷），避免快速冷却引发开裂'
+    },
+    issues: [
+      {
+        title: '脱碳',
+        cause: '热处理过程中暴露在含氧气氛中，表面碳损失，导致表面硬度下降，影响疲劳寿命',
+        solution: '在中性气氛炉、盐浴或真空中进行热处理；严格控制固溶处理时间≤1h；采用VIM-VAR双真空冶炼工艺'
+      },
+      {
+        title: '时效温度波动导致性能不均',
+        cause: '时效处理温度波动超过±6℃，M₂C碳化物析出不均匀，二次硬化效果差',
+        solution: '高精度测温系统确保482±6℃范围内；定期校准热处理设备（符合CQI-9 SAT标准），炉温偏差≤±5℃'
+      },
+      {
+        title: '锻造晶粒异常长大',
+        cause: '终锻温度<900℃或变形量<20%/火次导致晶粒粗化',
+        solution: '严格控制终锻温度≥900℃；每火次变形量≥20%；采用多火次锻造；锻造后砂冷或灰冷'
+      },
+      {
+        title: '非金属夹杂物引发疲劳裂纹',
+        cause: '夹杂物尺寸>15μm时显著降低疲劳寿命',
+        solution: '采用VIM-VAR双真空冶炼工艺减少夹杂物；确保ASTM E45≤1.5级；喷丸强化引入残余压应力'
+      },
+    ]
+  },
+
+  // ============================
+  // 300M
+  // ============================
+  {
+    id: '300M', name: '300M (40CrNi2Si2MoVA)', category: 'steel',
+    formula: 'Fe-C-Si-Mn-Cr-Ni-Mo-V',
+    betaTemp: '-',
+    desc: '中碳低合金超高强度钢，4340钢改良型，Si含量高，优良抗应力腐蚀',
+    application: '飞机起落架、高强紧固件、航空承力结构件',
+    keyProps: [
+      { label: '抗拉强度', value: '1860-2200 MPa' },
+      { label: '断面收缩率', value: '≥30%' },
+      { label: '断裂韧性 KIC', value: '≥90 MPa·m¹/²' },
+      { label: '疲劳强度(10⁷次)', value: '≥800 MPa' },
+    ],
+    heatTreatment: [
+      { process: '预备正火', temp: '925±15℃', time: '1h', cooling: 'air', note: '细化晶粒，消除锻造应力' },
+      { process: '高温回火（预备）', temp: '700℃', time: '1h', cooling: 'air', note: '稳定组织，提高加工性能' },
+      { process: '淬火', temp: '870±15℃', time: '1h', cooling: 'oil', note: '获得板条马氏体组织' },
+      { process: '回火（双次）', temp: '300±5℃', time: '2h×2次', cooling: 'air', note: '避免400-650℃回火脆性区间' },
+    ],
+    deformation: {
+      process: '热锻造',
+      zones: [
+        { label: '工业锻造温度', value: '1100-1120℃', note: '始锻温度', type: 'temp' },
+        { label: '终锻温度', value: '≥850℃', note: '避免晶粒粗化', type: 'temp' },
+        { label: '推荐应变速率', value: '0.5-2 s⁻¹', note: '获得细晶组织', type: 'rate' },
+        { label: '每火次变形量', value: '≥35%', note: '确保充分DRX', type: 'deform' },
+        { label: '回火禁忌温度', value: '400-650℃', note: '第二类回火脆性区间', type: 'warn' },
+      ],
+      detail: '热压缩实验温度900-1150℃（1173-1423K）；工业锻造1100-1120℃，终锻温度≥850℃；最佳热加工窗口：900-950℃，应变速率0.01-0.1 s⁻¹；每火次变形量≥35%；热压缩实验中应变速率0.001-50 s⁻¹'
+    },
+    issues: [
+      {
+        title: '氢脆（延迟断裂）',
+        cause: '电镀、酸洗等工艺后氢原子进入材料内部，在应力集中处聚集形成高压，导致延迟断裂',
+        solution: '热处理后去氢处理200-300℃/2-4h（真空）或427℃/2h；采用低氢扩散镀层（达克罗涂层）；焊接前预热至250-300℃，焊后立即427℃去应力退火'
+      },
+      {
+        title: '回火脆性',
+        cause: '在400-650℃温度区间回火或缓慢冷却，P/Sb/Sn等杂质元素在晶界偏析，冲击韧性显著下降',
+        solution: '严格避免在400-650℃区间回火；回火温度控制在300±5℃；优化冶炼减少P≤0.001%，S≤0.001%；含Mo钢种可抑制晶界偏析'
+      },
+      {
+        title: '变形量不足导致晶粒粗化',
+        cause: '锻造变形量<35%/火次或终锻温度过高（>1120℃）导致晶粒长大',
+        solution: '确保每火次锻造变形量≥35%；终锻温度控制≥850℃；对变形量较小的整形工序，降低加热温度至1000℃以补偿'
+      },
+      {
+        title: '炉温不均匀导致性能波动',
+        cause: '热处理炉温度不均匀，造成回火硬度不一致',
+        solution: '定期执行SAT测试（每6个月或炉膛改造后）；炉温均匀性≤±10℃，波动度≤±5℃；使用S型铂铑热电偶（精度±1℃）'
+      },
+    ]
+  },
+
+  // ============================
+  // GH4169
+  // ============================
+  {
+    id: 'GH4169', name: 'GH4169 (IN718)', category: 'nickel',
+    formula: 'Ni-Cr-Fe-Nb-Mo (Ni≈53%)',
+    betaTemp: '-',
+    desc: '镍基高温合金，γ\'\'/γ\'沉淀强化，最广泛使用的高温合金',
+    application: '航空发动机涡轮盘、压气机盘、叶片、紧固件',
+    keyProps: [
+      { label: 'γ\'\'相完全溶解温度', value: '950℃' },
+      { label: 'δ相完全溶解温度', value: '980℃' },
+      { label: '最高服役温度', value: '650℃' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理（HB/Z 140）', temp: '950-980℃±10℃', time: '1h', cooling: 'water/oil/air', note: '溶解γ\'\'相，细化晶粒' },
+      { process: '固溶处理（GJB 712A）', temp: '950-1010℃±10℃', time: '1h', cooling: 'water/oil', note: '不同标准，参数略有差异' },
+      { process: '第一级时效', temp: '720±5℃', time: '8h', cooling: 'furnace', note: '以50℃/h炉冷至620℃±5℃' },
+      { process: '第二级时效', temp: '620±5℃', time: '8h', cooling: 'air', note: '析出γ\'\'相和γ\'相，协同强化' },
+      { process: '均匀化处理（铸锭）', temp: '1120℃', time: '2h', cooling: 'air', note: '消除枝晶偏析和Laves相' },
+    ],
+    deformation: {
+      process: '锻造/热轧',
+      zones: [
+        { label: '开坯锻造温度', value: '1150-1180℃', note: '锻比≥3，消除铸态组织', type: 'temp' },
+        { label: '精锻工艺', value: '980-1020℃', note: '应变速率0.01-0.1 s⁻¹', type: 'temp' },
+        { label: '最佳塑性温度', value: '950-1100℃', note: '终轧温度≥900℃', type: 'temp' },
+        { label: '应变速率', value: '0.001-10 s⁻¹', note: '热压缩实验范围', type: 'rate' },
+        { label: '终锻温度', value: '≥950℃', note: '避免700-900℃脆性区', type: 'deform' },
+      ],
+      detail: '开坯锻造1150-1180℃，锻比≥3；精锻980-1020℃，单次变形量约35mm/道次，转移时间≤30s；热轧最佳塑性温度950-1100℃，道次变形量≤30%；终锻温度对δ相形态影响：950℃呈短棒状（最佳），930℃呈颗粒状，<900℃呈针状'
+    },
+    issues: [
+      {
+        title: '晶粒异常长大',
+        cause: '固溶温度过高（>1065℃）或保温时间过长；终锻温度过高（>1020℃）导致δ相完全溶解，晶粒粗化',
+        solution: '固溶温度严格控制在950-980℃；采用快速冷却（水冷或油冷）；终锻温度控制在950-980℃；大型锻件采用多道次锻造'
+      },
+      {
+        title: '层状组织（碳化物偏析）',
+        cause: '铸锭枝晶间存在Laves相和碳化物偏析；热轧温度过高或过低；变形速率不当',
+        solution: '锻造前均匀化处理（如1190℃/72h + 1160℃/48h）；热轧温度控制在950-1100℃；低应变速率0.01-0.1 s⁻¹；热轧后及时固溶处理'
+      },
+      {
+        title: 'δ相形态控制不当',
+        cause: '终锻温度控制不当：<900℃针状，930℃颗粒状，950℃短棒状（最佳），980℃晶界针状，≥1020℃无δ相但晶粒粗化',
+        solution: '终锻温度控制在950-980℃，使δ相呈短棒状分布于晶界为主；锻造后进行中间退火消除残余应力'
+      },
+      {
+        title: '应变时效开裂（SAC）',
+        cause: '焊接或冷加工产生残余应力；时效过程中γ\'相快速析出，锁定残余应力；热影响区（HAZ）经历热循环',
+        solution: '焊接后进行焊后热处理（PWHT），消除残余应力；采用低线能量焊接；"软化-焊接-重新时效"工艺；避免在650-900℃区间长时间停留'
+      },
+    ]
+  },
+
+  // ============================
+  // GH4698
+  // ============================
+  {
+    id: 'GH4698', name: 'GH4698', category: 'nickel',
+    formula: 'Ni-Cr-W-Mo-Ti-Al (ЭИ698改进型)',
+    betaTemp: '-',
+    desc: '镍基高温合金，γ\'强化，三段式热处理制度',
+    application: '航空发动机涡轮盘、压气机盘、高温紧固件',
+    keyProps: [
+      { label: '固溶温度', value: '1160℃±10℃' },
+      { label: '时效温度', value: '775±10℃' },
+    ],
+    heatTreatment: [
+      { process: '固溶处理（盘形锻件）', temp: '1120℃±10℃', time: '8h', cooling: 'air', note: '溶解有害相，细化晶粒' },
+      { process: '固溶处理（紧固件棒材）', temp: '1100-1120℃', time: '8h', cooling: 'air', note: '冷拔棒材可采用1110℃×1h/AC再结晶' },
+      { process: '中间处理', temp: '1000±10℃', time: '4-4.5h', cooling: 'air', note: '促进γ\'相均匀分布，消除固溶残余应力' },
+      { process: '时效处理', temp: '775±10℃', time: '16-16.5h', cooling: 'air', note: '析出γ\'相，提高力学性能' },
+      { process: '四段工艺（燃气轮机棒材）', temp: '1110-1130℃+990-1010℃+765-785℃+700℃', time: '8.5h+4.5h+16.5h+16h', cooling: 'all AC', note: '四阶段空冷处理' },
+    ],
+    deformation: {
+      process: '锻造/热轧',
+      zones: [
+        { label: '开坯锻造温度', value: '1160-1180℃', note: '终锻温度≥950℃', type: 'temp' },
+        { label: '最佳塑性区间', value: '1160-1000℃', note: '避免晶界脆化', type: 'temp' },
+        { label: '热轧开轧温度', value: '1100-1180℃', note: '终轧温度≥900℃', type: 'temp' },
+        { label: '道次变形量', value: '≤30%', note: '每道次后冷却', type: 'deform' },
+        { label: '单次冷拔量', value: '≤20%', note: '多次变形+中间退火', type: 'deform' },
+      ],
+      detail: '开坯锻造1160-1180℃，终锻≥950℃；精锻尚不明确；热轧开轧1100-1180℃，终轧≥900℃；道次变形量≤30%，总变形量通常≥3（棒材）'
+    },
+    issues: [
+      {
+        title: '晶粒异常长大',
+        cause: '固溶温度过高（>1100℃）或保温时间过长；热轧终轧温度控制不当',
+        solution: '固溶温度控制在1160℃±10℃，保温0.5h；采用空冷快速冷却；热轧终轧温度控制在1000℃±10℃；冷拔后进行再结晶固溶处理（1110℃×1h/AC）'
+      },
+      {
+        title: '氧化脱碳',
+        cause: '热加工温度过高或时间过长；加热环境含氧量高',
+        solution: '热加工温度控制在1100-1180℃最佳塑性区间；采用真空或惰性气体保护；热加工后及时酸洗或喷砂表面处理'
+      },
+      {
+        title: '装配偏斜应力（紧固件）',
+        cause: '晶粒粗大（0-1级）降低抗疲劳能力；装配时产生轴向和偏斜拉应力',
+        solution: '优化热处理工艺细化晶粒（1110℃×2h/AC+1000℃×4h/AC+775℃×16h/AC）；细化装配工艺，避免偏斜应力产生'
+      },
+    ]
+  },
 ];
 
-// =================== STATE ===================
-let currentTab='overview';
-let currentFilter='all';
-let searchQuery='';
-let compareList=[];
+// ===================================================================
+// RENDER ENGINE
+// ===================================================================
+let currentCategory = 'all';
+let currentSearch = '';
+let currentType = 'all';
 
-// =================== RENDER ===================
-function filterDB(){
-  let list = DB;
-  if(currentFilter!=='all') list=list.filter(m=>m.category===currentFilter);
-  if(searchQuery){
-    const q=searchQuery.toLowerCase();
-    list=list.filter(m=>
-      m.name.toLowerCase().includes(q)||
-      m.fullName.toLowerCase().includes(q)||
-      m.composition.toLowerCase().includes(q)||
-      m.type.toLowerCase().includes(q)||
-      m.catName.includes(q)||
-      m.tags.some(t=>t.toLowerCase().includes(q))
-    );
+function renderCooling(cooling) {
+  const map = {
+    'water': '<span class="cooling-badge cool-water">水冷</span>',
+    'air': '<span class="cooling-badge cool-air">空冷</span>',
+    'oil': '<span class="cooling-badge cool-oil">油冷</span>',
+    'furnace': '<span class="cooling-badge cool-furnace">炉冷</span>',
+    'water/oil': '<span class="cooling-badge cool-water">水/油冷</span>',
+    'water/air': '<span class="cooling-badge cool-water">水/空冷</span>',
+    'fan': '<span class="cooling-badge cool-air">风冷</span>',
+    'furnace/air': '<span class="cooling-badge cool-furnace">炉/空冷</span>',
+    'water+air': '<span class="cooling-badge cool-water">水冷+空冷</span>',
+  };
+  return map[cooling] || `<span class="cooling-badge cool-air">${cooling}</span>`;
+}
+
+function renderCard(mat) {
+  const badgeClass = { titanium: 'badge-ti', aluminum: 'badge-al', steel: 'badge-st', nickel: 'badge-ni' }[mat.category];
+  const catName = { titanium: '钛合金', aluminum: '铝合金', steel: '超高强度钢', nickel: '高温合金' }[mat.category];
+  const cardId = 'card-' + mat.id;
+
+  // Heat treatment rows
+  let htRows = mat.heatTreatment.map((r, i) => `
+    <tr class="${i % 2 === 1 ? 'tr-alt' : ''}">
+      <td>${r.process}</td>
+      <td class="temp-value">${r.temp}</td>
+      <td>${r.time}</td>
+      <td>${renderCooling(r.cooling)}</td>
+      <td style="color:var(--text3);font-size:0.78rem;">${r.note || ''}</td>
+    </tr>`).join('');
+
+  // Deformation chips
+  let defChips = mat.deformation.zones.map(z => `
+    <div class="deform-chip chip-${z.type}">
+      <span class="deform-chip-label">${z.type === 'temp' ? '温度' : z.type === 'rate' ? '应变速率' : z.type === 'deform' ? '变形量' : '⚠ 禁忌区'}</span>
+      <span class="deform-chip-value">${z.value}</span>
+      <span class="deform-chip-note">${z.note}</span>
+    </div>`).join('');
+
+  // Issues
+  let issueItems = mat.issues.slice(0, 3).map(iss => `
+    <div class="issue-item">
+      <div class="issue-title">⚠ ${iss.title}</div>
+      <div class="issue-body">
+        <div class="issue-cause"><b>原因：</b>${iss.cause}</div>
+        <div class="issue-solution"><div class="solution-label">✓ 解决方案</div>${iss.solution}</div>
+      </div>
+    </div>`).join('');
+
+  if (mat.issues.length > 3) {
+    issueItems += `<button class="expand-toggle" onclick="showMoreIssues('${mat.id}')">+ 查看全部 ${mat.issues.length} 个问题</button>`;
   }
-  return list;
+
+  // Key props
+  let propsHtml = mat.keyProps.map(p => `<div class="key-prop"><strong>${p.label}</strong>${p.value}</div>`).join('');
+
+  return `
+<div class="material-card" id="${cardId}" data-id="${mat.id}" data-category="${mat.category}">
+  <div class="card-header">
+    <div class="card-title-group">
+      <div class="card-material-name">${mat.name}</div>
+      <div class="card-material-formula">${mat.formula}</div>
+    </div>
+    <div class="card-badges">
+      <span class="badge ${badgeClass}">${catName}</span>
+      ${mat.betaTemp !== '-' ? `<span class="badge badge-app">β相变点: ${mat.betaTemp}</span>` : ''}
+    </div>
+  </div>
+  <div class="card-tabs">
+    <div class="card-tab active" onclick="switchTab(this, '${mat.id}-overview')">概述</div>
+    <div class="card-tab" onclick="switchTab(this, '${mat.id}-ht')">热处理工艺</div>
+    <div class="card-tab" onclick="switchTab(this, '${mat.id}-def')">热变形参数</div>
+    <div class="card-tab" onclick="switchTab(this, '${mat.id}-issues')">常见问题</div>
+  </div>
+  <!-- overview -->
+  <div class="card-tab-content active" id="${mat.id}-overview">
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:12px;">${mat.desc}</p>
+    <div class="section-h">应用领域</div>
+    <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px;">${mat.application}</p>
+    <div class="section-h">关键性能指标</div>
+    <div class="key-props">${propsHtml}</div>
+    <button class="expand-toggle" onclick="openModal('${mat.id}')">📋 查看完整详情 →</button>
+  </div>
+  <!-- heat treatment -->
+  <div class="card-tab-content" id="${mat.id}-ht">
+    <div style="overflow-x:auto;">
+      <table class="process-table">
+        <thead><tr><th>工序</th><th>温度</th><th>时间</th><th>冷却</th><th>说明</th></tr></thead>
+        <tbody>${htRows}</tbody>
+      </table>
+    </div>
+  </div>
+  <!-- deformation -->
+  <div class="card-tab-content" id="${mat.id}-def">
+    <div class="section-h">工序类型：${mat.deformation.process}</div>
+    <div class="deform-zone">${defChips}</div>
+    <div class="section-h">详细说明</div>
+    <p style="font-size:0.8rem;color:var(--text2);line-height:1.6;">${mat.deformation.detail}</p>
+  </div>
+  <!-- issues -->
+  <div class="card-tab-content" id="${mat.id}-issues">
+    ${issueItems}
+  </div>
+</div>`;
 }
 
-function catClass(cat){return cat}
-function catColor(cat){return{titanium:'var(--titanium)',aluminum:'var(--aluminum)',superalloy:'var(--superalloy)',steel:'var(--steel)'}[cat]||'var(--primary)'}
-
-function renderOverviewCards(){
-  const list=filterDB();
-  document.getElementById('overviewCards').innerHTML=list.map(m=>`
-    <div class="mat-card" data-id="${m.id}" onclick="showDetail('${m.id}')">
-      <div class="compare-check ${compareList.includes(m.id)?'checked':''}" onclick="event.stopPropagation();toggleCompare('${m.id}')"></div>
-      <div class="mat-card-header">
-        <div class="mat-icon" style="background:${catColor(m.category)}">${m.name.substring(0,2)}</div>
-        <div class="info"><h3>${m.fullName}</h3><span>${m.type}</span></div>
-      </div>
-      <div class="mat-card-body">
-        <div class="row"><span class="label">成分</span><span class="value">${m.composition}</span></div>
-        <div class="row"><span class="label">β转变/相变温度</span><span class="value">${m.betaTransus}</span></div>
-        <div class="row"><span class="label">热处理工艺数</span><span class="value">${m.heatTreatment.length} 种</span></div>
-        <div class="row"><span class="label">常见问题数</span><span class="value">${m.problems.length} 项</span></div>
-      </div>
-      <div class="mat-card-footer">${m.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-    </div>`).join('');
-  document.getElementById('totalCount').textContent=list.length+' 种材料';
+function switchTab(el, contentId) {
+  const card = el.closest('.material-card');
+  card.querySelectorAll('.card-tab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.card-tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
 }
 
-function renderHTCards(){
-  const list=filterDB();
-  document.getElementById('htCards').innerHTML=list.map(m=>`
-    <div class="mat-card" data-id="${m.id}" onclick="showDetail('${m.id}')">
-      <div class="mat-card-header">
-        <div class="mat-icon" style="background:${catColor(m.category)}">${m.name.substring(0,2)}</div>
-        <div class="info"><h3>${m.fullName}</h3><span>热处理工艺</span></div>
-      </div>
-      <div class="mat-card-body">
-        ${m.heatTreatment.slice(0,4).map(h=>`
-          <div class="row"><span class="label">${h.process}</span><span class="value">${h.temp} / ${h.time}</span></div>
-        `).join('')}
-        ${m.heatTreatment.length>4?`<div class="row"><span class="label">...</span><span class="value">共${m.heatTreatment.length}种工艺</span></div>`:''}
-      </div>
-    </div>`).join('');
-}
-
-function renderHDCards(){
-  const list=filterDB();
-  document.getElementById('hdCards').innerHTML=list.map(m=>`
-    <div class="mat-card" data-id="${m.id}" onclick="showDetail('${m.id}')">
-      <div class="mat-card-header">
-        <div class="mat-icon" style="background:${catColor(m.category)}">${m.name.substring(0,2)}</div>
-        <div class="info"><h3>${m.fullName}</h3><span>热变形工艺</span></div>
-      </div>
-      <div class="mat-card-body">
-        <div class="row"><span class="label">变形温度范围</span><span class="value">${m.hotDeformation.tempRange}</span></div>
-        <div class="row"><span class="label">最优变形温度</span><span class="value">${m.hotDeformation.optimalTemp}</span></div>
-        <div class="row"><span class="label">应变速率范围</span><span class="value">${m.hotDeformation.strainRateRange}</span></div>
-        <div class="row"><span class="label">最优应变速率</span><span class="value">${m.hotDeformation.optimalStrainRate}</span></div>
-        <div class="row"><span class="label">锻造温度</span><span class="value">${m.hotDeformation.forgingTemp}</span></div>
-        <div class="row"><span class="label">最大变形量</span><span class="value">${m.hotDeformation.maxDeform}</span></div>
-      </div>
-    </div>`).join('');
-}
-
-function renderProbCards(){
-  const list=filterDB();
-  let html='';
-  list.forEach(m=>{
-    m.problems.forEach(p=>{
-      html+=`
-        <div class="mat-card" style="cursor:default">
-          <div class="mat-card-header">
-            <div class="mat-icon" style="background:${catColor(m.category)};font-size:12px">${m.name}</div>
-            <div class="info"><h3 style="color:${p.severity==='danger'?'var(--danger)':'var(--warning)'}">${p.title}</h3><span>${m.fullName}</span></div>
-          </div>
-          <div class="mat-card-body">
-            <div class="problem-card ${p.severity==='warn'?'warn':''}">
-              <div class="p-row"><span class="p-label">原因:</span><span class="p-val">${p.cause}</span></div>
-              <div class="p-row"><span class="p-label">影响:</span><span class="p-val">${p.effect}</span></div>
-              <div class="p-row"><span class="p-label">防治:</span><span class="p-val">${p.solution}</span></div>
-            </div>
-          </div>
-        </div>`;
-    });
+function renderAll() {
+  const grid = document.getElementById('materialsGrid');
+  let filtered = MATERIALS.filter(m => {
+    if (currentCategory !== 'all' && m.category !== currentCategory) return false;
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      const hay = (m.name + m.formula + m.desc + m.application + m.heatTreatment.map(r => r.process + r.temp + r.note).join(' ')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
   });
-  document.getElementById('probCards').innerHTML=html;
-}
 
-function renderAll(){
-  renderOverviewCards();
-  renderHTCards();
-  renderHDCards();
-  renderProbCards();
-  updateCompareBar();
-}
-
-// =================== DETAIL PANEL ===================
-function showDetail(id){
-  const m=DB.find(x=>x.id===id);
-  if(!m)return;
-  document.getElementById('detailTitle').textContent=m.fullName+' 工艺详情';
-  let html=`
-    <div class="detail-section">
-      <h4><span class="dot" style="background:${catColor(m.category)}"></span>基本信息</h4>
-      <div class="tbl-wrap"><table>
-        <tr><td style="width:120px;font-weight:600">牌号</td><td>${m.fullName}</td></tr>
-        <tr><td style="font-weight:600">类型</td><td>${m.type}</td></tr>
-        <tr><td style="font-weight:600">成分</td><td>${m.composition}</td></tr>
-        <tr><td style="font-weight:600">β转变/相变温度</td><td>${m.betaTransus}</td></tr>
-        <tr><td style="font-weight:600">密度</td><td>${m.density}</td></tr>
-        <tr><td style="font-weight:600">应用标签</td><td>${m.tags.join('、')}</td></tr>
-      </table></div>
-    </div>
-    <div class="detail-section">
-      <h4><span class="dot" style="background:#e8a317"></span>热处理工艺参数</h4>
-      <div class="tbl-wrap"><table>
-        <tr><th>工艺</th><th>温度</th><th>保温时间</th><th>冷却方式</th><th>说明</th></tr>
-        ${m.heatTreatment.map(h=>`<tr><td style="font-weight:600;white-space:nowrap">${h.process}</td><td>${h.temp}</td><td>${h.time}</td><td>${h.cooling}</td><td style="font-size:11px;color:var(--text2)">${h.notes}</td></tr>`).join('')}
-      </table></div>
-    </div>
-    <div class="detail-section">
-      <h4><span class="dot" style="background:#0d904f"></span>热变形工艺参数</h4>
-      <div class="tbl-wrap"><table>
-        <tr><td style="font-weight:600;width:140px">变形温度范围</td><td>${m.hotDeformation.tempRange}</td></tr>
-        <tr><td style="font-weight:600">最优变形温度</td><td>${m.hotDeformation.optimalTemp}</td></tr>
-        <tr><td style="font-weight:600">应变速率范围</td><td>${m.hotDeformation.strainRateRange}</td></tr>
-        <tr><td style="font-weight:600">最优应变速率</td><td>${m.hotDeformation.optimalStrainRate}</td></tr>
-        <tr><td style="font-weight:600">锻造温度</td><td>${m.hotDeformation.forgingTemp}</td></tr>
-        <tr><td style="font-weight:600">终锻温度</td><td>${m.hotDeformation.finishForgeTemp}</td></tr>
-        <tr><td style="font-weight:600">最大变形量</td><td>${m.hotDeformation.maxDeform}</td></tr>
-        <tr><td style="font-weight:600">激活能</td><td>${m.hotDeformation.activationEnergy}</td></tr>
-      </table></div>
-      <p style="font-size:12px;color:var(--text2);margin-top:6px">${m.hotDeformation.notes}</p>
-    </div>
-    <div class="detail-section">
-      <h4><span class="dot" style="background:#d93025"></span>常见问题与防治</h4>
-      <div class="problem-list">
-        ${m.problems.map(p=>`
-          <div class="problem-card ${p.severity==='warn'?'warn':''}">
-            <div class="p-title">${p.title}</div>
-            <div class="p-row"><span class="p-label">原因:</span><span class="p-val">${p.cause}</span></div>
-            <div class="p-row"><span class="p-label">影响:</span><span class="p-val">${p.effect}</span></div>
-            <div class="p-row"><span class="p-label">防治:</span><span class="p-val">${p.solution}</span></div>
-          </div>`).join('')}
-      </div>
-    </div>`;
-  document.getElementById('detailBody').innerHTML=html;
-  document.getElementById('overlay').classList.add('show');
-  document.getElementById('detailPanel').classList.add('show');
-}
-function closeDetail(){
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('detailPanel').classList.remove('show');
-}
-
-// =================== COMPARE ===================
-function toggleCompare(id){
-  const idx=compareList.indexOf(id);
-  if(idx>=0) compareList.splice(idx,1);
-  else if(compareList.length<4) compareList.push(id);
-  renderAll();
-}
-function updateCompareBar(){
-  const bar=document.getElementById('compareBar');
-  const sel=document.getElementById('compareSelected');
-  if(compareList.length>0) bar.classList.add('show');
-  else bar.classList.remove('show');
-  sel.innerHTML=compareList.map(id=>{
-    const m=DB.find(x=>x.id===id);
-    return `<span class="compare-tag" style="background:${catColor(m.category)}">${m.name}<span class="remove" onclick="toggleCompare('${id}')">✕</span></span>`;
-  }).join('');
-}
-function clearCompare(){
-  compareList=[];
-  renderAll();
-}
-function startCompare(){
-  if(compareList.length<2){alert('请至少选择2种材料进行对比');return}
-  // Switch to compare tab
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector('.tab[data-tab="compare"]').classList.add('active');
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sec-compare').classList.add('active');
-  currentTab='compare';
-  renderCompareTable();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function renderCompareTable(){
-  const mats=compareList.map(id=>DB.find(x=>x.id===id));
-  let html=`
-    <div class="tbl-wrap" style="margin-top:16px">
-      <table class="compare-table">
-        <thead><tr><th>参数</th>${mats.map(m=>`<th style="color:${catColor(m.category)}">${m.fullName}</th>`).join('')}</tr></thead>
-        <tbody>
-          <tr><th>合金类型</th>${mats.map(m=>`<td>${m.type}</td>`).join('')}</tr>
-          <tr><th>化学成分</th>${mats.map(m=>`<td>${m.composition}</td>`).join('')}</tr>
-          <tr><th>密度</th>${mats.map(m=>`<td>${m.density}</td>`).join('')}</tr>
-          <tr><th>β转变/相变温度</th>${mats.map(m=>`<td>${m.betaTransus}</td>`).join('')}</tr>
-          <tr style="background:#f0f7ff"><th colspan="${mats.length+1}" style="text-align:center;color:var(--primary)">🔥 热处理工艺</th></tr>`;
-  // Gather all unique process names
-  const allProcesses=new Set();
-  mats.forEach(m=>m.heatTreatment.forEach(h=>allProcesses.add(h.process)));
-  allProcesses.forEach(proc=>{
-    html+=`<tr><th>${proc}</th>`;
-    mats.forEach(m=>{
-      const h=m.heatTreatment.find(x=>x.process===proc);
-      if(h) html+=`<td style="font-size:11px">${h.temp}<br>${h.time}<br>${h.cooling}</td>`;
-      else html+=`<td style="color:#ccc">—</td>`;
-    });
-    html+=`</tr>`;
-  });
-  html+=`<tr style="background:#f0fff4"><th colspan="${mats.length+1}" style="text-align:center;color:var(--success)">⚙️ 热变形工艺</th></tr>
-          <tr><th>变形温度范围</th>${mats.map(m=>`<td>${m.hotDeformation.tempRange}</td>`).join('')}</tr>
-          <tr><th>最优变形温度</th>${mats.map(m=>`<td>${m.hotDeformation.optimalTemp}</td>`).join('')}</tr>
-          <tr><th>应变速率范围</th>${mats.map(m=>`<td>${m.hotDeformation.strainRateRange}</td>`).join('')}</tr>
-          <tr><th>最优应变速率</th>${mats.map(m=>`<td>${m.hotDeformation.optimalStrainRate}</td>`).join('')}</tr>
-          <tr><th>锻造温度</th>${mats.map(m=>`<td>${m.hotDeformation.forgingTemp}</td>`).join('')}</tr>
-          <tr><th>最大变形量</th>${mats.map(m=>`<td>${m.hotDeformation.maxDeform}</td>`).join('')}</tr>
-          <tr><th>激活能</th>${mats.map(m=>`<td>${m.hotDeformation.activationEnergy}</td>`).join('')}</tr>
-          <tr style="background:#fff5f5"><th colspan="${mats.length+1}" style="text-align:center;color:var(--danger)">⚠️ 常见问题</th></tr>`;
-  // Problems
-  const maxP=Math.max(...mats.map(m=>m.problems.length));
-  for(let i=0;i<maxP;i++){
-    html+=`<tr><th>问题 ${i+1}</th>`;
-    mats.forEach(m=>{
-      const p=m.problems[i];
-      if(p) html+=`<td style="font-size:11px"><b style="color:${p.severity==='danger'?'var(--danger)':'var(--warning)'}">${p.title}</b><br>原因:${p.cause}<br>防治:${p.solution}</td>`;
-      else html+=`<td style="color:#ccc">—</td>`;
-    });
-    html+=`</tr>`;
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><p>未找到匹配的材料，请尝试其他搜索词</p></div>`;
+    return;
   }
-  html+=`</tbody></table></div>`;
-  document.getElementById('compareContent').innerHTML=html;
+  grid.innerHTML = filtered.map(renderCard).join('');
 }
 
-// =================== EVENTS ===================
-// Tabs
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    const target=tab.dataset.tab;
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.getElementById('sec-'+target).classList.add('active');
-    currentTab=target;
-    if(target==='compare') renderCompareTable();
+// ===================================================================
+// FILTER & SEARCH
+// ===================================================================
+function filterCategory(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  const mapping = { all: 'all', titanium: 'titanium', aluminum: 'aluminum', steel: 'steel', nickel: 'nickel' };
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    if (t.textContent.includes({ all: '全部', titanium: '钛合金', aluminum: '铝合金', steel: '超高强度钢', nickel: '高温合金' }[cat])) {
+      t.classList.add('active');
+    }
   });
-});
-
-// Filter chips
-document.querySelectorAll('.chip').forEach(chip=>{
-  chip.addEventListener('click',()=>{
-    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');
-    currentFilter=chip.dataset.cat;
-    renderAll();
-  });
-});
-
-// Search
-document.getElementById('searchInput').addEventListener('input',e=>{
-  searchQuery=e.target.value.trim();
+  // also handle all tab
+  if (cat === 'all') document.querySelector('.cat-tab.all').classList.add('active');
   renderAll();
+}
+
+function doSearch(val) {
+  currentSearch = val.trim();
+  renderAll();
+}
+
+function filterByType(val) {
+  currentType = val;
+  renderAll();
+}
+
+function jumpTo(id) {
+  renderAll();
+  currentCategory = 'all';
+  setTimeout(() => {
+    const el = document.getElementById('card-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// ===================================================================
+// MODAL
+// ===================================================================
+function openModal(matId) {
+  const mat = MATERIALS.find(m => m.id === matId);
+  if (!mat) return;
+  const catName = { titanium: '钛合金', aluminum: '铝合金', steel: '超高强度钢', nickel: '高温合金' }[mat.category];
+  document.getElementById('modalTitle').textContent = mat.name;
+  document.getElementById('modalSubtitle').textContent = `${mat.formula} | ${catName} | ${mat.application}`;
+
+  let allHtRows = mat.heatTreatment.map((r, i) => `
+    <tr class="${i % 2 === 1 ? 'tr-alt' : ''}">
+      <td>${r.process}</td>
+      <td class="temp-value">${r.temp}</td>
+      <td>${r.time}</td>
+      <td>${renderCooling(r.cooling)}</td>
+      <td style="font-size:0.78rem;color:var(--text3);">${r.note || ''}</td>
+    </tr>`).join('');
+
+  let allIssues = mat.issues.map(iss => `
+    <div class="issue-item">
+      <div class="issue-title">⚠ ${iss.title}</div>
+      <div class="issue-body">
+        <div class="issue-cause"><b>原因：</b>${iss.cause}</div>
+        <div class="issue-solution"><div class="solution-label">✓ 解决方案</div>${iss.solution}</div>
+      </div>
+    </div>`).join('');
+
+  let propsHtml = mat.keyProps.map(p => `<div class="key-prop"><strong>${p.label}</strong>${p.value}</div>`).join('');
+
+  let defChips = mat.deformation.zones.map(z => `
+    <div class="deform-chip chip-${z.type}">
+      <span class="deform-chip-label">${z.type === 'temp' ? '温度' : z.type === 'rate' ? '应变速率' : z.type === 'deform' ? '变形量' : '⚠ 禁忌区'}</span>
+      <span class="deform-chip-value">${z.value}</span>
+      <span class="deform-chip-note">${z.note}</span>
+    </div>`).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">材料描述</div>
+      <p style="font-size:0.9rem;color:var(--text2);line-height:1.7;">${mat.desc}</p>
+      <div style="margin-top:10px;"><b style="font-size:0.85rem;">应用领域：</b><span style="color:var(--text2);font-size:0.85rem;">${mat.application}</span></div>
+      ${mat.betaTemp !== '-' ? `<div style="margin-top:6px;"><b style="font-size:0.85rem;">β/奥氏体相变温度：</b><span style="color:var(--primary-light);font-weight:600;">${mat.betaTemp}</span></div>` : ''}
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">关键性能指标</div>
+      <div class="key-props">${propsHtml}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">热处理工艺参数（完整）</div>
+      <div style="overflow-x:auto;">
+        <table class="process-table">
+          <thead><tr><th>工序类型</th><th>温度</th><th>保温时间</th><th>冷却方式</th><th>说明与备注</th></tr></thead>
+          <tbody>${allHtRows}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">热变形工艺参数</div>
+      <p style="font-size:0.83rem;color:var(--text3);margin-bottom:8px;">工序：${mat.deformation.process}</p>
+      <div class="deform-zone">${defChips}</div>
+      <div style="background:var(--info-bg);border:1px solid rgba(26,90,154,0.15);border-radius:8px;padding:12px;font-size:0.82rem;color:var(--text2);line-height:1.65;margin-top:8px;">${mat.deformation.detail}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">热处理/热加工常见问题与解决方案（全部 ${mat.issues.length} 项）</div>
+      ${allIssues}
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
 });
 
-// Detail panel
-document.getElementById('closeDetail').addEventListener('click',closeDetail);
-document.getElementById('overlay').addEventListener('click',closeDetail);
-
-// Compare bar
-document.getElementById('clearCompare').addEventListener('click',clearCompare);
-document.getElementById('startCompare').addEventListener('click',startCompare);
-
-// Back to top
-const backBtn=document.getElementById('backTop');
-window.addEventListener('scroll',()=>{
-  backBtn.classList.toggle('show',window.scrollY>400);
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
 });
-backBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
 
-// =================== INIT ===================
+function showMoreIssues(matId) {
+  openModal(matId);
+}
+
+// ===================================================================
+// INIT
+// ===================================================================
 renderAll();
 </script>
 </body>
